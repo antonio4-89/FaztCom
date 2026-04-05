@@ -1,0 +1,7 @@
+{
+  "name": "faztcom",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
