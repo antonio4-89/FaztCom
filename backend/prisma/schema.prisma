@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  mesero
+  cocinero
+  bartender
+}
+
+enum Seccion {
+  PM
+  T
+}
+
+enum MesaTipo {
+  mesa
+  periquera
+}
+
+enum MesaStatus {
+  libre
+  abierta
+  cerrada
+}
+
+enum NotaStatus {
+  abierta
+  cerrada
+}
+
+enum ComandaStatus {
+  pendiente
+  en_preparacion
+  listo
+  entregado
+}
+
+enum ComandaDestino {
+  cocina
+  barra
+}
+
+enum ProductoTipo {
+  comida
+  bebida
+}
+
+enum ProductoCategoria {
+  Hamburguesas
+  Pizzas
+  Snacks
+  Naranjada
+  Refrescos
+  JugosBoing
+  SodasItalianas
+  Frappes
+  Helados
+  Cafes
+  Otros
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  notas          Nota[]
+  notificaciones Notificacion[]
+}
+
+model Mesa {
+  id         Int        @id @default(autoincrement())
+  identifier String     @unique // "1PM", "2T", "SALA", "1P", etc.
+  seccion    Seccion
+  tipo       MesaTipo
+  status     MesaStatus @default(libre)
+
+  notas Nota[]
+}
+
+model Nota {
+  id        Int        @id @default(autoincrement())
+  mesaId    Int
+  meseroId  Int
+  status    NotaStatus @default(abierta)
+  total     Float      @default(0)
+  createdAt DateTime   @default(now())
+  closedAt  DateTime?
+
+  mesa     Mesa      @relation(fields: [mesaId], references: [id])
+  mesero   User      @relation(fields: [meseroId], references: [id])
+  comandas Comanda[]
+}
+
+model Comanda {
+  id        Int            @id @default(autoincrement())
+  notaId    Int
+  destino   ComandaDestino
+  status    ComandaStatus  @default(pendiente)
+  createdAt DateTime       @default(now())
+
+  nota  Nota          @relation(fields: [notaId], references: [id])
+  items ComandaItem[]
+}
+
+model ComandaItem {
+  id          Int     @id @default(autoincrement())
+  comandaId   Int
+  productoId  Int?
+  customName  String?
+  customPrice Float?
+  qty         Int
+  price       Float
+  tipo        ProductoTipo
+
+  comanda  Comanda   @relation(fields: [comandaId], references: [id])
+  producto Producto? @relation(fields: [productoId], references: [id])
+}
+
+model Producto {
+  id        Int               @id @default(autoincrement())
+  name      String
+  categoria ProductoCategoria
+  price     Float             @default(0)
+  tipo      ProductoTipo
+  active    Boolean           @default(true)
+  createdAt DateTime          @default(now())
+
+  comandaItems ComandaItem[]
+}
+
+model Gasto {
+  id          Int      @id @default(autoincrement())
+  description String
+  amount      Float
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model Notificacion {
+  id        Int      @id @default(autoincrement())
+  meseroId  Int
+  message   String
+  tipo      String // "cocina" | "barra"
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  mesero User @relation(fields: [meseroId], references: [id])
+}
