@@ -1,0 +1,5 @@
+.cat-label { font-size: 11px; font-weight: 700; color: var(--fc-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.prod-card { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; }
+.icon-btn { background: none; border: none; cursor: pointer; font-size: 13px; padding: 4px; opacity: .7; }
+.icon-btn:hover { opacity: 1; }

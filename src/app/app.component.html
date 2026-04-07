@@ -1,3 +1,35 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-split-pane contentId="main-content" when="lg">
+
+    <ion-menu contentId="main-content" menuId="main-menu" *ngIf="isLoggedIn">
+      <ion-content>
+        <div class="menu-logo">
+          <span class="logo-fast">FAST</span><span class="logo-com">COM</span>
+          <div class="menu-role">{{ currentRole }}</div>
+        </div>
+
+        <nav class="menu-nav">
+          <button
+            *ngFor="let item of menuItems"
+            class="menu-item"
+            [class.active]="isActive(item.route)"
+            (click)="navigate(item.route)">
+            <ion-icon [name]="item.icon"></ion-icon>
+            {{ item.label }}
+          </button>
+        </nav>
+
+        <div class="menu-footer">
+          <div class="menu-user">{{ userName }}</div>
+          <button class="menu-logout" (click)="logout()">
+            <ion-icon name="log-out-outline"></ion-icon>
+            Cerrar sesion
+          </button>
+        </div>
+      </ion-content>
+    </ion-menu>
+
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+
+  </ion-split-pane>
 </ion-app>

@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Comandas Activas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="load()"><ion-icon name="refresh-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <h1 class="fc-h1">Comandas Activas</h1>
+    <span class="fc-muted" style="font-size:12px">{{ notas.length }} nota{{ notas.length !== 1 ? 's' : '' }} abiertas</span>
+  </div>
+
+  <div *ngIf="loading" style="text-align:center;padding:40px">
+    <ion-spinner name="crescent" color="warning"></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="notas-grid">
+    <div *ngFor="let nota of notas" class="fc-card nota-card" [class.all-ready]="allItemsReady(nota)">
+      <!-- Header -->
+      <div class="nota-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="mesa-badge" [ngClass]="seccionClass(nota.mesa?.nombre)">{{ nota.mesa?.nombre }}</span>
+          <span class="fc-muted" style="font-size:11px">{{ nota.mesa?.seccion }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span *ngIf="pendingCount(nota) > 0" class="pending-pill">{{ pendingCount(nota) }} pendiente{{ pendingCount(nota) !== 1 ? 's' : '' }}</span>
+          <span *ngIf="allItemsReady(nota)" class="ready-pill">Todo listo</span>
+        </div>
+      </div>
+
+      <!-- Mesero -->
+      <div style="font-size:11px;color:var(--fc-muted);margin-bottom:8px">
+        Mesero: <span style="color:var(--fc-text)">{{ nota.mesero?.name ?? 'N/A' }}</span>
+      </div>
+
+      <!-- Items -->
+      <div class="items-list">
+        <div *ngFor="let item of nota.items" class="item-row">
+          <div style="display:flex;align-items:center;gap:6px;flex:1">
+            <span class="item-tipo" [class.tipo-bebida]="item.tipo === 'bebida'">{{ item.tipo === 'bebida' ? '🍸' : '🍽' }}</span>
+            <span style="font-size:12px">{{ item.nombre }}</span>
+            <span *ngIf="item.notas" class="nota-chip">{{ item.notas }}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:var(--fc-muted)">x{{ item.cantidad }}</span>
+            <span class="item-status" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="nota-footer">
+        <span class="fc-muted" style="font-size:11px">Nota #{{ nota.id }}</span>
+        <span style="font-size:13px;font-weight:600;color:var(--fc-accent)">${{ notaTotal(nota) | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <p *ngIf="notas.length === 0" class="fc-muted" style="text-align:center;padding:60px;grid-column:1/-1">
+      Sin comandas activas
+    </p>
+  </div>
+</ion-content>

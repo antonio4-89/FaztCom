@@ -1,0 +1,87 @@
+.page-header {
+  margin-bottom: 20px;
+  p { margin-top: 4px; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--fc-dim);
+  ion-icon { font-size: 52px; display: block; margin: 0 auto 12px; }
+  p { margin-top: 6px; }
+}
+
+.historial-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nota-card {
+  padding: 14px 16px;
+}
+
+.nota-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.nota-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.nota-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.nota-meta {
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.items-summary {
+  font-size: 11px;
+}
+
+.nota-total {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.total-label {
+  display: block;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.total-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--fc-green);
+}
+
+.items-preview {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--fc-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.chip-text {
+  background: var(--fc-surface-alt);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--fc-muted);
+  display: inline-block;
+}

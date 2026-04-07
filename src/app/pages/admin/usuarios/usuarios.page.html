@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:10px">
+    <h1 class="fc-h1">Usuarios</h1>
+    <button class="btn-primary" (click)="newUsuario()">+ Registrar usuario</button>
+  </div>
+  <p class="fc-muted" style="margin-bottom:20px">Solo el administrador puede agregar usuarios</p>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div *ngFor="let u of usuarios" class="fc-card user-row">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="avatar" [ngClass]="'role-' + u.role">{{ roleEmoji(u.role) }}</div>
+        <div>
+          <div style="font-weight:500;font-size:13px">{{ u.name }}</div>
+          <div class="fc-muted" style="font-size:11px;margin-top:1px">{{ u.email }}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge" [ngClass]="roleBadgeClass(u.role)">{{ u.role }}</span>
+        <button class="icon-btn" (click)="editUsuario(u)" title="Editar">✏️</button>
+      </div>
+    </div>
+    <p *ngIf="!loading && usuarios.length === 0" class="fc-muted" style="text-align:center;padding:40px">Sin usuarios</p>
+  </div>
+</ion-content>

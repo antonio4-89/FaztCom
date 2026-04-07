@@ -1,0 +1,100 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Nueva Comanda — {{ mesa }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="comanda-layout">
+
+    <!-- LEFT: Menu -->
+    <div class="menu-panel">
+      <!-- Tipo toggle -->
+      <div class="tipo-toggle">
+        <button class="tipo-btn" [class.active]="tipo === 'comida'" (click)="tipo = 'comida'; catFilter = 'all'">
+          Comida
+        </button>
+        <button class="tipo-btn" [class.active]="tipo === 'bebida'" (click)="tipo = 'bebida'; catFilter = 'all'">
+          Bebidas
+        </button>
+      </div>
+
+      <!-- Category chips -->
+      <div class="cat-chips">
+        <button class="chip" [class.active]="catFilter === 'all'" (click)="catFilter = 'all'">Todos</button>
+        <button class="chip" *ngFor="let cat of cats" [class.active]="catFilter === cat" (click)="catFilter = cat">
+          {{ cat }}
+        </button>
+      </div>
+
+      <!-- Products -->
+      <div *ngFor="let group of filteredMenu" class="menu-group">
+        <div class="group-title">{{ group.cat }}</div>
+        <div class="products-grid">
+          <button *ngFor="let p of group.items" class="product-card" (click)="addItem(p)">
+            <div class="product-name">{{ p.name }}</div>
+            <div class="product-price" *ngIf="p.price > 0">${{ p.price }}</div>
+            <div class="product-price muted" *ngIf="p.price === 0">Sin precio</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Custom item -->
+      <div class="custom-section">
+        <button class="btn-soft btn-info" (click)="showCustom = !showCustom">
+          <ion-icon name="add-outline"></ion-icon> Item personalizado
+        </button>
+        <div class="custom-form" *ngIf="showCustom">
+          <input [(ngModel)]="customName" placeholder="Nombre del item" class="custom-input"/>
+          <input type="number" [(ngModel)]="customPrice" placeholder="Precio (opcional)" class="custom-input"/>
+          <button class="btn-soft btn-success" (click)="addCustom()">Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Cart -->
+    <div class="cart-panel">
+      <div class="cart-header">
+        <span class="fc-h3">Comanda</span>
+        <span class="badge badge-pendiente" *ngIf="totalItems > 0">{{ totalItems }} items</span>
+      </div>
+
+      <div class="cart-empty" *ngIf="items.length === 0">
+        <ion-icon name="cart-outline"></ion-icon>
+        <p>Sin productos</p>
+      </div>
+
+      <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of items">
+          <div class="item-info">
+            <div class="item-name">{{ item.name }}</div>
+            <div class="item-price fc-muted" *ngIf="item.price > 0">${{ item.price * item.qty }}</div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" (click)="decreaseItem(item)">−</button>
+            <span class="qty-val">{{ item.qty }}</span>
+            <button class="qty-btn" (click)="increaseItem(item)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="fc-divider" *ngIf="items.length > 0"/>
+
+      <div class="cart-total" *ngIf="total > 0">
+        <span class="fc-muted">Total estimado</span>
+        <span class="total-val">${{ total }}</span>
+      </div>
+
+      <button class="btn-primary full send-btn" (click)="sendComanda()" [disabled]="loading || items.length === 0">
+        <ion-icon name="send-outline"></ion-icon>
+        {{ loading ? 'Enviando...' : 'Enviar Comanda' }}
+      </button>
+    </div>
+
+  </div>
+</ion-content>

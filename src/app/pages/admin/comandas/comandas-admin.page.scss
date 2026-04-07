@@ -1,0 +1,91 @@
+.notas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.nota-card {
+  padding: 14px;
+  border-left: 3px solid var(--fc-border);
+  transition: border-color .2s;
+}
+
+.nota-card.all-ready {
+  border-left-color: var(--fc-green);
+}
+
+.nota-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.mesa-badge {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.pending-pill {
+  font-size: 10px;
+  background: rgba(255,107,53,.15);
+  color: var(--fc-accent);
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+.ready-pill {
+  font-size: 10px;
+  background: rgba(78,205,127,.15);
+  color: var(--fc-green);
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+  border-top: 1px solid var(--fc-border);
+  padding-top: 8px;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.item-tipo { font-size: 13px; }
+
+.nota-chip {
+  font-size: 10px;
+  color: var(--fc-muted);
+  background: var(--fc-surface2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-status {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.nota-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--fc-border);
+  padding-top: 8px;
+  margin-top: 2px;
+}

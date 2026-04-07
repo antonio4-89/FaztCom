@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Notificaciones</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="markAllRead()" *ngIf="unreadCount > 0">
+        <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="loadNotificaciones()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="page-header anim-up">
+    <h1 class="fc-h1">Notificaciones</h1>
+    <p class="fc-muted" *ngIf="unreadCount > 0">{{ unreadCount }} sin leer</p>
+    <p class="fc-muted" *ngIf="unreadCount === 0">Todo al dia</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && notifs.length === 0">
+    <ion-icon name="notifications-off-outline"></ion-icon>
+    <h3 class="fc-h3">Sin notificaciones</h3>
+    <p class="fc-muted">Aqui apareceran los pedidos listos</p>
+  </div>
+
+  <div class="notifs-list anim-up">
+    <div
+      class="notif-card fc-card"
+      *ngFor="let n of notifs"
+      [class.unread]="!n.read"
+      (click)="markRead(n)">
+      <div class="notif-icon" [style.color]="getIconColor(n.tipo)">
+        <ion-icon [name]="getIcon(n.tipo)"></ion-icon>
+      </div>
+      <div class="notif-body">
+        <div class="notif-message">{{ n.message }}</div>
+        <div class="notif-time fc-dim">{{ n.createdAt | date:'HH:mm' }}</div>
+      </div>
+      <div class="unread-dot" *ngIf="!n.read"></div>
+    </div>
+  </div>
+</ion-content>

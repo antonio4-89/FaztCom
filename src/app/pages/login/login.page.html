@@ -1,0 +1,46 @@
+<ion-content>
+  <div class="login-wrap">
+    <div class="logo">
+      <div class="logo-title">
+        <span class="fast">FAST</span><span class="com">COM</span>
+      </div>
+      <p class="subtitle">Sistema de gestion de comandas</p>
+    </div>
+
+    <div class="fc-card login-card" *ngIf="mode === 'login'">
+      <div class="field">
+        <label>Correo electronico</label>
+        <input type="email" [(ngModel)]="email" placeholder="usuario@fastcom.mx"/>
+      </div>
+      <div class="field">
+        <label>Contrasena</label>
+        <input type="password" [(ngModel)]="password" placeholder="••••••••" (keyup.enter)="login()"/>
+      </div>
+      <button class="forgot-link" (click)="mode = 'forgot'">Olvidaste tu contrasena?</button>
+      <button class="btn-primary full" (click)="login()" [disabled]="loading">
+        {{ loading ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+
+      <div class="demo-section">
+        <p class="demo-label">Demo — Iniciar como:</p>
+        <div class="demo-grid">
+          <button class="demo-btn admin" (click)="loginAs('admin')">Admin</button>
+          <button class="demo-btn" (click)="loginAs('mesero')">Mesero</button>
+          <button class="demo-btn" (click)="loginAs('cocinero')">Cocinero</button>
+          <button class="demo-btn" (click)="loginAs('bartender')">Bartender</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fc-card login-card" *ngIf="mode === 'forgot'">
+      <h2 class="fc-h2" style="margin-bottom:6px">Recuperar contrasena</h2>
+      <p class="fc-muted" style="margin-bottom:18px">Ingresa tu correo y te enviaremos un codigo</p>
+      <div class="field">
+        <label>Correo electronico</label>
+        <input type="email" [(ngModel)]="email" placeholder="usuario@fastcom.mx"/>
+      </div>
+      <button class="btn-primary full">Enviar codigo</button>
+      <button class="back-link" (click)="mode = 'login'">← Volver al login</button>
+    </div>
+  </div>
+</ion-content>

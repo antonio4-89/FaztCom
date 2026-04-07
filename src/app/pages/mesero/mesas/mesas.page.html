@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Mesas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadMesas()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="page-header anim-up">
+    <h1 class="fc-h1">Mesas del Restaurante</h1>
+    <p class="fc-muted">Selecciona una mesa para crear o ver la comanda</p>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><span class="dot dot-libre"></span> Disponible</span>
+    <span class="legend-item"><span class="dot dot-abierta"></span> Ocupada</span>
+    <span class="legend-item"><span class="dot dot-cerrada"></span> Cerrada</span>
+  </div>
+
+  <!-- PM Section -->
+  <div class="section-block anim-up">
+    <div class="section-header">
+      <span class="badge sec-PM">PM / Sala</span>
+      <span class="fc-h3">Planta Media / Sala</span>
+    </div>
+    <div class="mesas-grid">
+      <button
+        *ngFor="let m of mesasPM"
+        class="mesa-card"
+        [class.mesa-abierta]="m.status === 'abierta'"
+        [class.mesa-cerrada]="m.status === 'cerrada'"
+        [class.mesa-disabled]="m.status === 'cerrada'"
+        (click)="selectMesa(m)">
+        <div class="mesa-tipo">{{ m.tipo === 'periquera' ? 'Periquera' : 'Mesa' }}</div>
+        <div class="mesa-id">{{ m.identifier }}</div>
+        <div class="mesa-status">{{ getStatusLabel(m.status) }}</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- T Section -->
+  <div class="section-block anim-up">
+    <div class="section-header">
+      <span class="badge sec-T">Terraza</span>
+      <span class="fc-h3">Terraza + Periqueras</span>
+    </div>
+    <div class="mesas-grid">
+      <button
+        *ngFor="let m of mesasT"
+        class="mesa-card"
+        [class.mesa-abierta]="m.status === 'abierta'"
+        [class.mesa-cerrada]="m.status === 'cerrada'"
+        [class.mesa-disabled]="m.status === 'cerrada'"
+        (click)="selectMesa(m)">
+        <div class="mesa-tipo">{{ m.tipo === 'periquera' ? 'Periquera' : 'Mesa' }}</div>
+        <div class="mesa-id">{{ m.identifier }}</div>
+        <div class="mesa-status">{{ getStatusLabel(m.status) }}</div>
+      </button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,4 @@
+.user-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.avatar { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.icon-btn { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; opacity: .7; }
+.icon-btn:hover { opacity: 1; }

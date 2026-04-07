@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Mis Pedidos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadNotas()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="page-header anim-up">
+    <h1 class="fc-h1">Mis Pedidos Activos</h1>
+    <p class="fc-muted">Mesas abiertas a tu cargo</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && notas.length === 0">
+    <ion-icon name="receipt-outline"></ion-icon>
+    <h3 class="fc-h3">Sin pedidos activos</h3>
+    <p class="fc-muted">No tienes mesas abiertas en este momento</p>
+  </div>
+
+  <div class="notas-list anim-up">
+    <div class="nota-card fc-card" *ngFor="let nota of notas">
+      <!-- Header -->
+      <div class="nota-header">
+        <div class="nota-title-row">
+          <span class="fc-h2">Mesa {{ nota.mesa?.identifier }}</span>
+          <span class="badge" [ngClass]="nota.mesa?.seccion === 'PM' ? 'sec-PM' : 'sec-T'">
+            {{ nota.mesa?.seccion }}
+          </span>
+          <span class="badge badge-abierta">Abierta</span>
+        </div>
+        <div class="nota-meta fc-muted">
+          Nota #{{ nota.id }} &bull; {{ nota.createdAt | date:'HH:mm' }}
+        </div>
+      </div>
+
+      <hr class="fc-divider"/>
+
+      <!-- Comandas -->
+      <div *ngFor="let comanda of nota.comandas" class="comanda-block">
+        <div class="comanda-sub-header">
+          <span class="fc-dim">Comanda #{{ comanda.id }}</span>
+          <span class="badge" [ngClass]="getStatusClass(comanda.status)">{{ getStatusLabel(comanda.status) }}</span>
+        </div>
+        <div class="items-list">
+          <div class="item-row" *ngFor="let item of comanda.items">
+            <span class="item-qty">x{{ item.qty }}</span>
+            <span class="item-name">{{ getItemName(item) }}</span>
+            <span class="item-price" *ngIf="item.price > 0">${{ item.price * item.qty }}</span>
+            <button class="remove-btn" (click)="removeItem(comanda, item)" *ngIf="comanda.status === 'pendiente'">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="fc-divider"/>
+
+      <!-- Footer -->
+      <div class="nota-footer">
+        <div class="nota-total">
+          <span class="fc-muted">Total</span>
+          <span class="total-amount">${{ getTotal(nota) }}</span>
+        </div>
+        <button class="btn-soft btn-success close-btn" (click)="closeNota(nota)">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          Cerrar cuenta
+        </button>
+      </div>
+    </div>
+  </div>
+</ion-content>

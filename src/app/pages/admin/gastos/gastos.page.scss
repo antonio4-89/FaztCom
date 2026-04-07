@@ -1,0 +1,5 @@
+.gasto-row { display: flex; align-items: center; justify-content: space-between; }
+.icon-btn { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; opacity: .7; }
+.icon-btn:hover { opacity: 1; }
+.total-card { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+.total-value { font-size: 18px; font-weight: 800; }

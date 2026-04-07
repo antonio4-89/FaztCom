@@ -1,2 +1,67 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+:root {
+  --ion-color-primary: #FF6B35;
+  --ion-color-primary-rgb: 255, 107, 53;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #e05e2e;
+  --ion-color-primary-tint: #ff7a49;
+
+  --ion-color-secondary: #A78BFA;
+  --ion-color-secondary-rgb: 167, 139, 250;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-shade: #9378db;
+  --ion-color-secondary-tint: #b097fb;
+
+  --ion-color-success: #10B981;
+  --ion-color-success-rgb: 16, 185, 129;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-shade: #0ea372;
+  --ion-color-success-tint: #28c08e;
+
+  --ion-color-warning: #F59E0B;
+  --ion-color-warning-rgb: 245, 158, 11;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-shade: #d88a09;
+  --ion-color-warning-tint: #f6a823;
+
+  --ion-color-danger: #F43F5E;
+  --ion-color-danger-rgb: 244, 63, 94;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-shade: #d73752;
+  --ion-color-danger-tint: #f5526e;
+
+  --ion-background-color: #06080C;
+  --ion-background-color-rgb: 6, 8, 12;
+  --ion-text-color: #E8ECF4;
+  --ion-text-color-rgb: 232, 236, 244;
+
+  --ion-card-background: #1A2130;
+  --ion-item-background: #1A2130;
+  --ion-toolbar-background: #0D1117;
+  --ion-tab-bar-background: #0D1117;
+  --ion-border-color: #1E2A3A;
+
+  /* FaztCom custom vars */
+  --fc-bg: #06080C;
+  --fc-surface: #0D1117;
+  --fc-surface-alt: #151B25;
+  --fc-card: #1A2130;
+  --fc-accent: #FF6B35;
+  --fc-accent-soft: rgba(255, 107, 53, 0.10);
+  --fc-accent-glow: rgba(255, 107, 53, 0.25);
+  --fc-green: #10B981;
+  --fc-green-soft: rgba(16, 185, 129, 0.10);
+  --fc-red: #F43F5E;
+  --fc-red-soft: rgba(244, 63, 94, 0.10);
+  --fc-yellow: #F59E0B;
+  --fc-yellow-soft: rgba(245, 158, 11, 0.10);
+  --fc-blue: #3B82F6;
+  --fc-blue-soft: rgba(59, 130, 246, 0.10);
+  --fc-purple: #A78BFA;
+  --fc-purple-soft: rgba(167, 139, 250, 0.10);
+  --fc-text: #E8ECF4;
+  --fc-muted: #6B7A90;
+  --fc-dim: #3D4A5C;
+  --fc-border: #1E2A3A;
+  --fc-border-light: #2A3A50;
+}

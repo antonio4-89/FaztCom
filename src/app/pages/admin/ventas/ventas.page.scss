@@ -1,0 +1,10 @@
+.sum-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.sum-card { text-align: center; }
+.sum-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+.sum-value { font-size: 28px; font-weight: 800; margin-top: 6px; }
+.notas-list { display: flex; flex-direction: column; gap: 6px; }
+.nota-row { display: flex; align-items: center; justify-content: space-between; background: var(--fc-surface-alt); border-radius: 8px; padding: 9px 12px; flex-wrap: wrap; gap: 8px; }
+
+@media (max-width: 600px) {
+  .sum-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,134 @@
+.page-header {
+  margin-bottom: 20px;
+  p { margin-top: 4px; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--fc-dim);
+
+  ion-icon {
+    font-size: 52px;
+    display: block;
+    margin: 0 auto 12px;
+  }
+
+  p { margin-top: 6px; }
+}
+
+.notas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nota-card {
+  padding: 16px 18px;
+}
+
+.nota-header {
+  margin-bottom: 4px;
+}
+
+.nota-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.nota-meta {
+  font-size: 12px;
+}
+
+.comanda-block {
+  margin-bottom: 10px;
+}
+
+.comanda-sub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.item-qty {
+  background: var(--fc-surface-alt);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--fc-accent);
+  flex-shrink: 0;
+}
+
+.item-name {
+  flex: 1;
+  color: var(--fc-text);
+}
+
+.item-price {
+  color: var(--fc-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.remove-btn {
+  background: var(--fc-red-soft);
+  border: none;
+  border-radius: 6px;
+  color: var(--fc-red);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  ion-icon { font-size: 14px; }
+}
+
+.nota-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nota-total {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.total-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--fc-accent);
+}
+
+.close-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  ion-icon { font-size: 16px; }
+}

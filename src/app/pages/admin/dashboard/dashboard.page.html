@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Dashboard</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h1 class="fc-h1" style="margin-bottom:20px">Dashboard</h1>
+
+  <!-- KPI Grid -->
+  <div class="kpi-grid">
+    <div *ngFor="let st of stats" class="fc-card kpi-card" [style.--kpi-color]="st.color" [style.--kpi-bg]="st.bg">
+      <div class="kpi-icon" [style.background]="st.bg">{{ st.icon }}</div>
+      <div>
+        <div class="fc-muted" style="font-size:10px;text-transform:uppercase;letter-spacing:.5px">{{ st.label }}</div>
+        <div class="kpi-value fc-num" [style.color]="st.color">{{ st.value }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ventas por sección -->
+  <div class="fc-card" style="margin-top:16px" *ngIf="summary">
+    <h2 class="fc-h2" style="margin-bottom:14px">Ventas por Sección</h2>
+    <div class="sec-grid">
+      <div class="sec-panel">
+        <div class="fc-muted" style="font-size:11px">🏔 Terraza</div>
+        <div class="sec-value fc-num" style="color:var(--fc-accent)">${{ summary.ventasT.toLocaleString() }}</div>
+      </div>
+      <div class="sec-panel">
+        <div class="fc-muted" style="font-size:11px">🏠 PM / Sala</div>
+        <div class="sec-value fc-num" style="color:var(--fc-purple)">${{ summary.ventasPM.toLocaleString() }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" style="text-align:center;padding:60px;color:var(--fc-muted)">Cargando...</div>
+</ion-content>

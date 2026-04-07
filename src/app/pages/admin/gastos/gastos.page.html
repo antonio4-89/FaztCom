@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Gastos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <h1 class="fc-h1">Gastos</h1>
+    <button class="btn-primary" (click)="newGasto()">+ Nuevo gasto</button>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div *ngFor="let g of gastos" class="fc-card gasto-row">
+      <div>
+        <div style="font-weight:500;font-size:13px">{{ g.description }}</div>
+        <div class="fc-muted" style="font-size:11px;margin-top:2px">{{ g.date | date:'dd/MM/yyyy' }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-weight:700;color:var(--fc-red);font-size:14px">-${{ g.amount.toLocaleString() }}</span>
+        <button class="icon-btn" (click)="deleteGasto(g)" title="Eliminar">🗑</button>
+      </div>
+    </div>
+
+    <p *ngIf="!loading && gastos.length === 0" class="fc-muted" style="text-align:center;padding:40px">
+      Sin gastos registrados
+    </p>
+  </div>
+
+  <!-- Total -->
+  <div *ngIf="gastos.length > 0" class="fc-card total-card">
+    <span class="fc-muted">Total gastos:</span>
+    <span class="total-value fc-num" style="color:var(--fc-red)">-${{ total.toLocaleString() }}</span>
+  </div>
+</ion-content>

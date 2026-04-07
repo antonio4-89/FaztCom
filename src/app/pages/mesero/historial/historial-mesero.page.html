@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Historial</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadHistorial()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="page-header anim-up">
+    <h1 class="fc-h1">Historial de Pedidos</h1>
+    <p class="fc-muted">Cuentas cerradas de hoy</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && notas.length === 0">
+    <ion-icon name="time-outline"></ion-icon>
+    <h3 class="fc-h3">Sin historial</h3>
+    <p class="fc-muted">No hay cuentas cerradas aun</p>
+  </div>
+
+  <div class="historial-list anim-up">
+    <div class="nota-card fc-card" *ngFor="let nota of notas">
+      <div class="nota-row">
+        <div class="nota-left">
+          <div class="nota-title">
+            <span class="fc-h3">Mesa {{ nota.mesa?.identifier }}</span>
+            <span class="badge" [ngClass]="getSeccionClass(nota.mesa?.seccion || '')">{{ nota.mesa?.seccion }}</span>
+            <span class="badge badge-cerrada">Cerrada</span>
+          </div>
+          <div class="nota-meta fc-muted">
+            Nota #{{ nota.id }} &bull; Cerrada {{ nota.closedAt | date:'HH:mm' }}
+          </div>
+          <div class="items-summary fc-dim" *ngIf="nota.comandas">
+            {{ getItemCount(nota) }} productos
+          </div>
+        </div>
+        <div class="nota-total">
+          <span class="total-label fc-muted">Total</span>
+          <span class="total-val">${{ getTotal(nota) }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="nota.comandas && nota.comandas.length > 0" class="items-preview">
+        <div class="item-chip" *ngFor="let c of nota.comandas">
+          <span *ngFor="let item of c.items" class="chip-text">
+            x{{ item.qty }} {{ getItemName(item) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

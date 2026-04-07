@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Cocina</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="pg-hdr">
+    <div>
+      <h1 class="fc-h1">Cocina</h1>
+      <p class="fc-muted">Comandas de comida en cola</p>
+    </div>
+    <div class="cnts">
+      <span class="pill pil-y">{{ count('pendiente') }} pend.</span>
+      <span class="pill pil-b">{{ count('en_preparacion') }} prep.</span>
+      <span class="pill pil-g">{{ count('listo') }} listo</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div
+      *ngFor="let c of comandas"
+      class="fc-card cmd"
+      [class.dim]="c.status === 'listo'"
+      [style.border-left]="'4px solid ' + getBorder(c.status)">
+
+      <div class="rsb">
+        <div class="rg">
+          <span class="fc-h3">#{{ c.id }}</span>
+          <span class="badge"
+            [class.badge-pendiente]="c.status === 'pendiente'"
+            [class.badge-preparando]="c.status === 'en_preparacion'"
+            [class.badge-listo]="c.status === 'listo'">
+            {{ c.status === 'en_preparacion' ? 'Preparando' : c.status }}
+          </span>
+        </div>
+        <span class="fc-dim">{{ c.createdAt | date:'HH:mm' }}</span>
+      </div>
+
+      <p class="meta fc-muted">
+        Mesa {{ c.nota?.mesa?.identifier || '—' }} &middot; {{ c.nota?.mesero?.name || '—' }}
+        <span class="badge" [class.sec-T]="c.nota?.mesa?.seccion === 'T'" [class.sec-PM]="c.nota?.mesa?.seccion === 'PM'">
+          {{ c.nota?.mesa?.seccion === 'T' ? 'Terraza' : 'PM/Sala' }}
+        </span>
+      </p>
+
+      <hr class="fc-divider">
+
+      <div class="itms">
+        <div *ngFor="let it of c.items" class="irow">
+          <span class="qty">{{ it.qty }}</span>
+          <span>{{ itemName(it) }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="c.status !== 'listo' && c.status !== 'entregado'" style="margin-top:8px">
+        <button *ngIf="c.status === 'pendiente'" class="abtn bbtn" (click)="preparar(c)">Preparar</button>
+        <button *ngIf="c.status === 'en_preparacion'" class="abtn gbtn" (click)="marcarListo(c)">&#10003; Listo</button>
+      </div>
+    </div>
+
+    <p *ngIf="!loading && comandas.length === 0" class="empty">Sin comandas pendientes</p>
+  </div>
+</ion-content>
