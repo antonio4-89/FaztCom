@@ -122,18 +122,34 @@
   }
 }
 
-/* Custom section */
-.custom-section {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--fc-border);
+/* Custom btn inline */
+.custom-btn {
+  border-style: dashed;
+  color: var(--fc-accent);
+  border-color: var(--fc-accent);
+
+  &.active {
+    background: var(--fc-accent-soft);
+    border-color: var(--fc-accent);
+    color: var(--fc-accent);
+    border-style: solid;
+  }
 }
 
 .custom-form {
-  margin-top: 10px;
   display: flex;
-  flex-direction: column;
   gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 14px;
+  background: var(--fc-surface-alt);
+  border-radius: 10px;
+  border: 1px dashed var(--fc-accent);
+}
+
+.custom-price {
+  max-width: 120px;
 }
 
 .custom-input {

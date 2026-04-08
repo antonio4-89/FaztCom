@@ -7,6 +7,7 @@ interface Stat { label: string; value: string; color: string; bg: string; icon: 
   selector: 'app-dashboard',
   templateUrl: 'dashboard.page.html',
   styleUrls: ['dashboard.page.scss'],
+  standalone: false
 })
 export class DashboardPage implements OnInit {
   summary: VentasSummary | null = null;

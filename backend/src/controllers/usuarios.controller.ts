@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
+import nodemailer from 'nodemailer';
 import { Role } from '@prisma/client';
 import prisma from '../lib/prisma';
 
@@ -26,10 +27,10 @@ export async function getUsuarios(_req: Request, res: Response): Promise<void> {
 
 export async function createUsuario(req: Request, res: Response): Promise<void> {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, role } = req.body;
 
-    if (!name || !email || !password || !role) {
-      res.status(400).json({ error: 'name, email, password y role son requeridos' });
+    if (!name || !email || !role) {
+      res.status(400).json({ error: 'name, email y role son requeridos' });
       return;
     }
 
@@ -45,7 +46,9 @@ export async function createUsuario(req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Generate random 6-char alphanumeric code (uppercase)
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const hashedPassword = await bcrypt.hash(code, 10);
 
     const usuario = await prisma.user.create({
       data: {
@@ -53,6 +56,7 @@ export async function createUsuario(req: Request, res: Response): Promise<void> 
         email,
         password: hashedPassword,
         role,
+        mustChangePassword: true,
       },
       select: {
         id: true,
@@ -63,6 +67,52 @@ export async function createUsuario(req: Request, res: Response): Promise<void> 
         createdAt: true,
       },
     });
+
+    // Send welcome email with temporary access code
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+
+      await transporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: email,
+        subject: 'Tu acceso a FaztCom',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+            <h2 style="color: #333;">Bienvenido a FaztCom, ${name}</h2>
+            <p style="color: #555;">Tu cuenta ha sido creada. Usa el siguiente código temporal para ingresar:</p>
+            <div style="
+              background: #f4f4f4;
+              border: 2px dashed #aaa;
+              border-radius: 8px;
+              padding: 20px;
+              text-align: center;
+              margin: 24px 0;
+            ">
+              <span style="
+                font-size: 32px;
+                font-weight: bold;
+                letter-spacing: 6px;
+                color: #222;
+                font-family: monospace;
+              ">${code}</span>
+            </div>
+            <p style="color: #555;">Se te pedirá que cambies tu contraseña al iniciar sesión por primera vez.</p>
+            <p style="color: #999; font-size: 12px;">Si no esperabas este correo, ignóralo.</p>
+          </div>
+        `,
+      });
+    } catch (mailError) {
+      console.error('[createUsuario] Error al enviar email:', mailError);
+      // Don't fail the request — user was created successfully
+    }
 
     res.status(201).json(usuario);
   } catch (error) {
@@ -122,5 +172,40 @@ export async function updateUsuario(req: Request, res: Response): Promise<void> 
   } catch (error) {
     console.error('[updateUsuario]', error);
     res.status(500).json({ error: 'Error al actualizar el usuario' });
+  }
+}
+
+export async function deleteUsuario(req: Request, res: Response): Promise<void> {
+  try {
+    const usuarioId = parseInt(req.params.id, 10);
+
+    if (isNaN(usuarioId)) {
+      res.status(400).json({ error: 'ID de usuario inválido' });
+      return;
+    }
+
+    // Cannot delete yourself
+    if (req.user!.id === usuarioId) {
+      res.status(400).json({ error: 'No puedes eliminar tu propio usuario' });
+      return;
+    }
+
+    const existing = await prisma.user.findUnique({ where: { id: usuarioId } });
+
+    if (!existing) {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+      return;
+    }
+
+    // Soft delete: set active to false
+    await prisma.user.update({
+      where: { id: usuarioId },
+      data: { active: false },
+    });
+
+    res.json({ message: 'Usuario desactivado correctamente' });
+  } catch (error) {
+    console.error('[deleteUsuario]', error);
+    res.status(500).json({ error: 'Error al eliminar el usuario' });
   }
 }

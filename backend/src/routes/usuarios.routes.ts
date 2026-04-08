@@ -3,6 +3,7 @@ import {
   getUsuarios,
   createUsuario,
   updateUsuario,
+  deleteUsuario,
 } from '../controllers/usuarios.controller';
 import { requireRole } from '../middleware/role';
 
@@ -19,5 +20,8 @@ router.post('/', createUsuario);
 
 // PUT /api/usuarios/:id — update user
 router.put('/:id', updateUsuario);
+
+// DELETE /api/usuarios/:id — soft delete user
+router.delete('/:id', deleteUsuario);
 
 export default router;

@@ -7,6 +7,7 @@ import { Producto, MenuGroup } from '../../../core/models/producto.model';
   selector: 'app-menu-admin',
   templateUrl: 'menu-admin.page.html',
   styleUrls: ['menu-admin.page.scss'],
+  standalone: false
 })
 export class MenuAdminPage implements OnInit {
   menu: Record<string, MenuGroup[]> = { comida: [], bebida: [] };

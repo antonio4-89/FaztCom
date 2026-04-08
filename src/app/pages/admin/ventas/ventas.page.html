@@ -6,9 +6,26 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <h1 class="fc-h1" style="margin-bottom:20px">Ventas</h1>
+  <h1 class="fc-h1" style="margin-bottom:16px">Ventas</h1>
 
-  <div *ngIf="summary">
+  <!-- Date filter -->
+  <div class="date-filter fc-card" style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <ion-icon name="calendar-outline" style="color:var(--fc-accent);font-size:18px"></ion-icon>
+      <span class="fc-muted" style="font-size:12px">Rango:</span>
+      <input type="date" class="date-input" [(ngModel)]="desde" (change)="loadHistorial()"/>
+      <span class="fc-muted">—</span>
+      <input type="date" class="date-input" [(ngModel)]="hasta" (change)="loadHistorial()"/>
+      <button class="btn-soft btn-info" (click)="setHoy()">Hoy</button>
+      <button class="btn-soft btn-warning" (click)="clearFilter()">Limpiar</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" style="text-align:center;padding:60px">
+    <ion-spinner name="crescent" color="warning"></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && summary">
     <!-- Summary Cards -->
     <div class="sum-grid">
       <div class="fc-card sum-card">
@@ -20,14 +37,17 @@
         <div class="sum-value fc-num" style="color:var(--fc-purple)">${{ summary.ventasPM.toLocaleString() }}</div>
       </div>
       <div class="fc-card sum-card">
-        <div class="fc-muted sum-label">En Caja (ventas - gastos)</div>
+        <div class="fc-muted sum-label">En Caja</div>
         <div class="sum-value fc-num" style="color:var(--fc-green)">${{ summary.enCaja.toLocaleString() }}</div>
       </div>
     </div>
 
-    <!-- Notas cerradas -->
+    <!-- Notas del periodo -->
     <div class="fc-card" style="margin-top:16px">
-      <h2 class="fc-h2" style="margin-bottom:12px">Notas cerradas hoy</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <h2 class="fc-h2">Notas cerradas</h2>
+        <span class="fc-muted" style="font-size:12px">{{ summary.notasCerradas.length }} nota(s)</span>
+      </div>
       <div class="notas-list">
         <div *ngFor="let n of summary.notasCerradas" class="nota-row">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -36,15 +56,14 @@
               {{ n.mesa?.seccion === 'T' ? 'Terraza' : 'PM/Sala' }}
             </span>
             <span class="fc-muted" style="font-size:12px">{{ n.mesero?.name }}</span>
+            <span class="fc-dim" style="font-size:11px">{{ n.closedAt | date:'dd/MM HH:mm' }}</span>
           </div>
-          <span style="font-weight:700;color:var(--fc-green)">${{ notaTotal(n).toLocaleString() }}</span>
+          <span style="font-weight:700;color:var(--fc-green)">${{ n.total?.toLocaleString() }}</span>
         </div>
         <p *ngIf="summary.notasCerradas.length === 0" class="fc-muted" style="text-align:center;padding:24px">
-          Sin notas cerradas hoy
+          Sin notas en este periodo
         </p>
       </div>
     </div>
   </div>
-
-  <div *ngIf="loading" style="text-align:center;padding:60px;color:var(--fc-muted)">Cargando...</div>
 </ion-content>

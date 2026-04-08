@@ -19,16 +19,19 @@
   </div>
 
   <div *ngIf="!loading" class="notas-grid">
-    <div *ngFor="let nota of notas" class="fc-card nota-card" [class.all-ready]="allItemsReady(nota)">
+    <div *ngFor="let nota of notas" class="fc-card nota-card" [class.all-ready]="allReady(nota)">
+
       <!-- Header -->
       <div class="nota-header">
         <div style="display:flex;align-items:center;gap:8px">
-          <span class="mesa-badge" [ngClass]="seccionClass(nota.mesa?.nombre)">{{ nota.mesa?.nombre }}</span>
-          <span class="fc-muted" style="font-size:11px">{{ nota.mesa?.seccion }}</span>
+          <span class="mesa-badge" [ngClass]="seccionClass(nota.mesa)">{{ nota.mesa?.identifier }}</span>
+          <span class="fc-muted" style="font-size:11px">{{ nota.mesa?.seccion === 'T' ? 'Terraza' : 'PM/Sala' }}</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px">
-          <span *ngIf="pendingCount(nota) > 0" class="pending-pill">{{ pendingCount(nota) }} pendiente{{ pendingCount(nota) !== 1 ? 's' : '' }}</span>
-          <span *ngIf="allItemsReady(nota)" class="ready-pill">Todo listo</span>
+          <span *ngIf="pendingCount(nota) > 0" class="pending-pill">
+            {{ pendingCount(nota) }} pendiente{{ pendingCount(nota) !== 1 ? 's' : '' }}
+          </span>
+          <span *ngIf="allReady(nota)" class="ready-pill">Todo listo</span>
         </div>
       </div>
 
@@ -37,19 +40,23 @@
         Mesero: <span style="color:var(--fc-text)">{{ nota.mesero?.name ?? 'N/A' }}</span>
       </div>
 
-      <!-- Items -->
+      <!-- Comandas + items -->
       <div class="items-list">
-        <div *ngFor="let item of nota.items" class="item-row">
-          <div style="display:flex;align-items:center;gap:6px;flex:1">
-            <span class="item-tipo" [class.tipo-bebida]="item.tipo === 'bebida'">{{ item.tipo === 'bebida' ? '🍸' : '🍽' }}</span>
-            <span style="font-size:12px">{{ item.nombre }}</span>
-            <span *ngIf="item.notas" class="nota-chip">{{ item.notas }}</span>
+        <ng-container *ngFor="let comanda of nota.comandas">
+          <!-- Comanda header row -->
+          <div class="comanda-row">
+            <span class="item-tipo">{{ comanda.destino === 'barra' ? '🍸' : '🍽' }}</span>
+            <span style="font-size:11px;color:var(--fc-muted);flex:1">{{ comanda.destino | titlecase }}</span>
+            <span class="item-status" [ngClass]="statusClass(comanda.status)">{{ statusLabel(comanda.status) }}</span>
           </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:11px;color:var(--fc-muted)">x{{ item.cantidad }}</span>
-            <span class="item-status" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) }}</span>
+          <!-- Items within comanda -->
+          <div *ngFor="let item of comanda.items" class="item-row">
+            <span style="font-size:12px;flex:1;padding-left:16px">{{ itemName(item) }}</span>
+            <span *ngIf="item.customName && item.productoId == null" class="nota-chip">custom</span>
+            <span style="font-size:11px;color:var(--fc-muted)">x{{ item.qty }}</span>
+            <span style="font-size:12px;color:var(--fc-accent)">${{ item.price | number:'1.0-0' }}</span>
           </div>
-        </div>
+        </ng-container>
       </div>
 
       <!-- Footer -->
@@ -60,7 +67,7 @@
     </div>
 
     <p *ngIf="notas.length === 0" class="fc-muted" style="text-align:center;padding:60px;grid-column:1/-1">
-      Sin comandas activas
+      Sin notas activas
     </p>
   </div>
 </ion-content>

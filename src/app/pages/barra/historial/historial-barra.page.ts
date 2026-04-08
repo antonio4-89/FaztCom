@@ -6,6 +6,7 @@ import { Comanda } from '../../../core/models/comanda.model';
   selector: 'app-historial-barra',
   templateUrl: 'historial-barra.page.html',
   styleUrls: ['historial-barra.page.scss'],
+  standalone: false
 })
 export class HistorialBarraPage implements OnInit {
   comandas: Comanda[] = [];

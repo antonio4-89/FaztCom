@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Producto, ProductoTipo } from '@prisma/client';
+import { Producto, ProductoTipo, ProductoCategoria } from '@prisma/client';
 import prisma from '../lib/prisma';
 
 type GroupedMenu = {
@@ -84,7 +84,7 @@ export async function updateProducto(req: Request, res: Response): Promise<void>
 
     const updateData: Partial<{
       name: string;
-      categoria: string;
+      categoria: ProductoCategoria;
       price: number;
       tipo: ProductoTipo;
       active: boolean;

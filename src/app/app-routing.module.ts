@@ -6,6 +6,7 @@ import { RoleGuard } from './core/guards/role.guard';
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule) },
+  { path: 'change-password', canActivate: [AuthGuard], loadChildren: () => import('./pages/change-password/change-password.module').then(m => m.ChangePasswordPageModule) },
 
   // Mesero
   { path: 'mesero/mesas', canActivate: [AuthGuard], loadChildren: () => import('./pages/mesero/mesas/mesas.module').then(m => m.MesasPageModule) },

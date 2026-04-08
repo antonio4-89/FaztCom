@@ -14,18 +14,29 @@
 
     <!-- LEFT: Menu -->
     <div class="menu-panel">
-      <!-- Tipo toggle -->
+
+      <!-- Tipo toggle + custom item inline -->
       <div class="tipo-toggle">
-        <button class="tipo-btn" [class.active]="tipo === 'comida'" (click)="tipo = 'comida'; catFilter = 'all'">
-          Comida
+        <button class="tipo-btn" [class.active]="tipo === 'comida'" (click)="tipo = 'comida'; catFilter = 'all'; showCustom = false">
+          🍽 Comida
         </button>
-        <button class="tipo-btn" [class.active]="tipo === 'bebida'" (click)="tipo = 'bebida'; catFilter = 'all'">
-          Bebidas
+        <button class="tipo-btn" [class.active]="tipo === 'bebida'" (click)="tipo = 'bebida'; catFilter = 'all'; showCustom = false">
+          🍸 Bebidas
+        </button>
+        <button class="tipo-btn custom-btn" [class.active]="showCustom" (click)="showCustom = !showCustom">
+          + Producto nuevo
         </button>
       </div>
 
-      <!-- Category chips -->
-      <div class="cat-chips">
+      <!-- Custom item form (inline, shown when showCustom) -->
+      <div class="custom-form" *ngIf="showCustom">
+        <input [(ngModel)]="customName" placeholder="Nombre del producto" class="custom-input"/>
+        <input type="number" [(ngModel)]="customPrice" placeholder="Precio" class="custom-input custom-price"/>
+        <button class="btn-soft btn-success" (click)="addCustom()" [disabled]="!customName.trim()">Agregar</button>
+      </div>
+
+      <!-- Category chips (solo cuando no está en modo custom) -->
+      <div class="cat-chips" *ngIf="!showCustom">
         <button class="chip" [class.active]="catFilter === 'all'" (click)="catFilter = 'all'">Todos</button>
         <button class="chip" *ngFor="let cat of cats" [class.active]="catFilter === cat" (click)="catFilter = cat">
           {{ cat }}
@@ -33,28 +44,20 @@
       </div>
 
       <!-- Products -->
-      <div *ngFor="let group of filteredMenu" class="menu-group">
-        <div class="group-title">{{ group.cat }}</div>
-        <div class="products-grid">
-          <button *ngFor="let p of group.items" class="product-card" (click)="addItem(p)">
-            <div class="product-name">{{ p.name }}</div>
-            <div class="product-price" *ngIf="p.price > 0">${{ p.price }}</div>
-            <div class="product-price muted" *ngIf="p.price === 0">Sin precio</div>
-          </button>
+      <div *ngIf="!showCustom">
+        <div *ngFor="let group of filteredMenu" class="menu-group">
+          <div class="group-title">{{ group.cat }}</div>
+          <div class="products-grid">
+            <button *ngFor="let p of group.items" class="product-card" (click)="addItem(p)">
+              <div class="product-name">{{ p.name }}</div>
+              <div class="product-price" *ngIf="p.price > 0">${{ p.price }}</div>
+              <div class="product-price muted" *ngIf="p.price === 0">Sin precio</div>
+            </button>
+          </div>
         </div>
+        <p *ngIf="filteredMenu.length === 0" class="fc-muted" style="text-align:center;padding:40px">Sin productos</p>
       </div>
 
-      <!-- Custom item -->
-      <div class="custom-section">
-        <button class="btn-soft btn-info" (click)="showCustom = !showCustom">
-          <ion-icon name="add-outline"></ion-icon> Item personalizado
-        </button>
-        <div class="custom-form" *ngIf="showCustom">
-          <input [(ngModel)]="customName" placeholder="Nombre del item" class="custom-input"/>
-          <input type="number" [(ngModel)]="customPrice" placeholder="Precio (opcional)" class="custom-input"/>
-          <button class="btn-soft btn-success" (click)="addCustom()">Agregar</button>
-        </div>
-      </div>
     </div>
 
     <!-- RIGHT: Cart -->

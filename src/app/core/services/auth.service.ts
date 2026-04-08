@@ -6,6 +6,11 @@ import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { User, Role } from '../models/user.model';
 
+interface LoginResponse {
+  token: string;
+  user: User & { mustChangePassword?: boolean };
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenKey = 'fc_token';
@@ -27,8 +32,8 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string): Observable<{ token: string; user: User }> {
-    return this.http.post<{ token: string; user: User }>(`${environment.apiUrl}/auth/login`, { email, password }).pipe(
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, { email, password }).pipe(
       tap(res => {
         localStorage.setItem(this.tokenKey, res.token);
         localStorage.setItem(this.userKey, JSON.stringify(res.user));
@@ -36,6 +41,25 @@ export class AuthService {
         this.currentUser$.next(res.user);
       })
     );
+  }
+
+  /** Call after login: redirects to change-password if needed, else default route */
+  handlePostLogin(res: LoginResponse) {
+    if (res.user.mustChangePassword) {
+      this.router.navigateByUrl('/change-password');
+    } else {
+      this.router.navigateByUrl(this.getDefaultRoute());
+    }
+  }
+
+  /** Called after password changed — removes flag from local storage */
+  clearMustChangePassword() {
+    const user = this.currentUser$.value;
+    if (user) {
+      const updated = { ...user, mustChangePassword: false };
+      localStorage.setItem(this.userKey, JSON.stringify(updated));
+      this.currentUser$.next(updated);
+    }
   }
 
   logout() {

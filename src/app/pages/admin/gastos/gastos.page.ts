@@ -7,6 +7,7 @@ import { Gasto } from '../../../core/models/gasto.model';
   selector: 'app-gastos',
   templateUrl: 'gastos.page.html',
   styleUrls: ['gastos.page.scss'],
+  standalone: false
 })
 export class GastosPage implements OnInit {
   gastos: Gasto[] = [];

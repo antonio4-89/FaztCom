@@ -13,6 +13,7 @@ const ORDER: Record<ComandaStatus, number> = {
   selector: 'app-barra',
   templateUrl: 'barra.page.html',
   styleUrls: ['barra.page.scss'],
+  standalone: false
 })
 export class BarraPage implements OnInit, OnDestroy {
   comandas: Comanda[] = [];

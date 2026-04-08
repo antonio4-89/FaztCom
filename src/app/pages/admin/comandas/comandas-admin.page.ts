@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ComandasService } from '../../../core/services/comandas.service';
+import { NotasService } from '../../../core/services/notas.service';
 import { SocketService } from '../../../core/services/socket.service';
-import { Nota } from '../../../core/models/comanda.model';
+import { Nota, ComandaItem } from '../../../core/models/comanda.model';
 
 @Component({
   selector: 'app-comandas-admin',
   templateUrl: 'comandas-admin.page.html',
   styleUrls: ['comandas-admin.page.scss'],
+  standalone: false,
 })
 export class ComandasAdminPage implements OnInit, OnDestroy {
   notas: Nota[] = [];
@@ -15,7 +16,7 @@ export class ComandasAdminPage implements OnInit, OnDestroy {
   private subs: Subscription[] = [];
 
   constructor(
-    private svc: ComandasService,
+    private svc: NotasService,
     private socket: SocketService,
   ) {}
 
@@ -32,33 +33,41 @@ export class ComandasAdminPage implements OnInit, OnDestroy {
 
   load() {
     this.loading = true;
-    this.svc.getComandasActivas().subscribe({
+    this.svc.getMisNotas().subscribe({
       next: d => { this.notas = d; this.loading = false; },
       error: () => { this.loading = false; },
     });
   }
 
+  allItems(nota: Nota): ComandaItem[] {
+    return (nota.comandas ?? []).reduce((acc: ComandaItem[], c) => acc.concat(c.items ?? []), []);
+  }
+
   notaTotal(nota: Nota): number {
-    return nota.items?.reduce((s, i) => s + i.precio * i.cantidad, 0) ?? 0;
+    return this.allItems(nota).reduce((s: number, i: ComandaItem) => s + i.price * i.qty, 0);
   }
 
-  statusLabel(status: string): string {
-    return { pendiente: 'Pendiente', en_preparacion: 'En preparación', listo: 'Listo', entregado: 'Entregado' }[status] ?? status;
-  }
-
-  statusClass(status: string): string {
-    return 'status-' + status;
-  }
-
-  seccionClass(mesa: string): string {
-    return mesa?.startsWith('T') ? 'sec-T' : 'sec-PM';
-  }
-
-  allItemsReady(nota: Nota): boolean {
-    return nota.items?.every(i => i.status === 'listo' || i.status === 'entregado') ?? false;
+  allReady(nota: Nota): boolean {
+    return (nota.comandas?.length ?? 0) > 0 &&
+      nota.comandas!.every(c => c.status === 'listo' || c.status === 'entregado');
   }
 
   pendingCount(nota: Nota): number {
-    return nota.items?.filter(i => i.status === 'pendiente' || i.status === 'en_preparacion').length ?? 0;
+    return nota.comandas?.filter(c => c.status === 'pendiente' || c.status === 'en_preparacion').length ?? 0;
+  }
+
+  statusLabel(s: string): string {
+    const m: Record<string, string> = { pendiente: 'Pendiente', en_preparacion: 'En prep.', listo: 'Listo', entregado: 'Entregado' };
+    return m[s] ?? s;
+  }
+
+  statusClass(s: string): string { return 'status-' + s; }
+
+  seccionClass(mesa: Nota['mesa']): string {
+    return mesa?.seccion === 'T' ? 'sec-T' : 'sec-PM';
+  }
+
+  itemName(item: any): string {
+    return item.producto?.name || item.customName || '—';
   }
 }

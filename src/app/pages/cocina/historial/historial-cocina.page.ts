@@ -6,6 +6,7 @@ import { Comanda } from '../../../core/models/comanda.model';
   selector: 'app-historial-cocina',
   templateUrl: 'historial-cocina.page.html',
   styleUrls: ['historial-cocina.page.scss'],
+  standalone: false
 })
 export class HistorialCocinaPage implements OnInit {
   comandas: Comanda[] = [];

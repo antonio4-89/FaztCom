@@ -25,9 +25,9 @@ export class LoginPage {
     if (!this.email || !this.password) return;
     this.loading = true;
     this.auth.login(this.email, this.password).subscribe({
-      next: () => {
+      next: (res) => {
         this.loading = false;
-        this.router.navigateByUrl(this.auth.getDefaultRoute());
+        this.auth.handlePostLogin(res);
       },
       error: async () => {
         this.loading = false;

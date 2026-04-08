@@ -13,6 +13,7 @@ const ORDER: Record<ComandaStatus, number> = {
   selector: 'app-cocina',
   templateUrl: 'cocina.page.html',
   styleUrls: ['cocina.page.scss'],
+  standalone: false
 })
 export class CocinaPage implements OnInit, OnDestroy {
   comandas: Comanda[] = [];

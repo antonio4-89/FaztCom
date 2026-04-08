@@ -39,7 +39,7 @@ export async function login(req: Request, res: Response): Promise<void> {
 
     res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, mustChangePassword: user.mustChangePassword },
     });
   } catch (error) {
     console.error('[login]', error);
@@ -115,6 +115,33 @@ export async function resetPassword(req: Request, res: Response): Promise<void> 
     res.json({ message: 'Contraseña actualizada correctamente' });
   } catch (error) {
     console.error('[resetPassword]', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function changePassword(req: Request, res: Response): Promise<void> {
+  try {
+    const userId = req.user!.id;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      res.status(400).json({ error: 'La nueva contraseña debe tener al menos 6 caracteres' });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: false,
+      },
+    });
+
+    res.json({ message: 'Contraseña actualizada' });
+  } catch (error) {
+    console.error('[changePassword]', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
