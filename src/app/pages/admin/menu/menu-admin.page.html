@@ -6,9 +6,45 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <h1 class="fc-h1">Menú</h1>
-    <button class="btn-primary" (click)="newProducto()">+ Agregar producto</button>
+    <button class="btn-primary" (click)="openNewForm()">+ Agregar producto</button>
+  </div>
+
+  <!-- Inline new product form -->
+  <div *ngIf="formVisible" class="fc-card form-card anim-up" style="margin-bottom:16px">
+    <h2 class="fc-h2" style="margin-bottom:12px">Nuevo Producto</h2>
+    <div class="form-fields">
+      <div class="field">
+        <label class="field-label">Nombre</label>
+        <input class="fc-input" [(ngModel)]="fName" placeholder="Nombre del producto"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Categoría</label>
+        <input class="fc-input" [(ngModel)]="fCategoria" placeholder="Ej: Hamburguesas, Pizzas"/>
+      </div>
+      <div class="form-row">
+        <div class="field" style="flex:1">
+          <label class="field-label">Precio</label>
+          <input class="fc-input" type="number" [(ngModel)]="fPrice" placeholder="0"/>
+        </div>
+        <div class="field" style="flex:1">
+          <label class="field-label">Tipo</label>
+          <ion-select class="fc-select" interface="popover" [(ngModel)]="fTipo" placeholder="Tipo">
+            <ion-select-option value="comida">🍽 Comida</ion-select-option>
+            <ion-select-option value="bebida">🍸 Bebida</ion-select-option>
+          </ion-select>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn-primary" (click)="submitNewProduct()">Agregar</button>
+      <button class="btn-soft btn-danger" (click)="formVisible = false">Cancelar</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" style="text-align:center;padding:60px">
+    <ion-spinner name="crescent" color="warning"></ion-spinner>
   </div>
 
   <div *ngFor="let tipo of tipoKeys" style="margin-bottom:28px">
@@ -19,13 +55,17 @@
     <div *ngFor="let grp of menu[tipo]" style="margin-bottom:18px">
       <div class="cat-label">{{ grp.cat }}</div>
       <div class="prod-grid">
-        <div *ngFor="let p of grp.items" class="fc-card prod-card">
-          <div>
+        <div *ngFor="let p of grp.items" class="fc-card prod-card" [class.is-agotado]="p.agotado">
+          <div style="flex:1;min-width:0">
             <div style="font-weight:500;font-size:12px">{{ p.name }}</div>
             <div *ngIf="p.price > 0" style="color:var(--fc-accent);font-weight:700;font-size:12px;margin-top:2px">${{ p.price }}</div>
-            <div *ngIf="p.price === 0" class="fc-dim" style="font-size:10px;margin-top:2px">Sin precio</div>
+            <span *ngIf="p.agotado" class="agotado-tag">AGOTADO</span>
           </div>
-          <div style="display:flex;gap:4px">
+          <div style="display:flex;gap:4px;align-items:center;flex-shrink:0">
+            <button class="icon-btn stock-btn" [class.active-agotado]="p.agotado"
+                    (click)="toggleAgotado(p)" [title]="p.agotado ? 'Marcar disponible' : 'Marcar agotado'">
+              {{ p.agotado ? '✅' : '🚫' }}
+            </button>
             <button class="icon-btn" (click)="editProducto(p)" title="Editar">✏️</button>
             <button class="icon-btn" (click)="deleteProducto(p)" title="Eliminar">🗑</button>
           </div>
@@ -33,6 +73,4 @@
       </div>
     </div>
   </div>
-
-  <div *ngIf="loading" style="text-align:center;padding:60px;color:var(--fc-muted)">Cargando menú...</div>
 </ion-content>

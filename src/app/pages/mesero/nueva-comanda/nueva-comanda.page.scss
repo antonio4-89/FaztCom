@@ -101,6 +101,20 @@
   }
 }
 
+.product-card.agotado {
+  opacity: .45;
+  cursor: not-allowed;
+  border-color: var(--fc-red);
+}
+
+.agotado-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--fc-red);
+  letter-spacing: .4px;
+}
+
 .product-name {
   font-size: 13px;
   color: var(--fc-text);

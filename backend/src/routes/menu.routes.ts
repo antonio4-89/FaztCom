@@ -4,6 +4,7 @@ import {
   createProducto,
   updateProducto,
   deleteProducto,
+  toggleAgotado,
 } from '../controllers/menu.controller';
 import { requireRole } from '../middleware/role';
 
@@ -20,5 +21,8 @@ router.put('/:id', requireRole('admin'), updateProducto);
 
 // DELETE /api/menu/:id — soft delete product (admin only)
 router.delete('/:id', requireRole('admin'), deleteProducto);
+
+// PATCH /api/menu/:id/stock — toggle agotado (admin, cocinero for comida, bartender for bebida)
+router.patch('/:id/stock', requireRole('admin', 'cocinero', 'bartender'), toggleAgotado);
 
 export default router;

@@ -24,6 +24,10 @@ export class ApiService {
     return this.http.put<T>(`${environment.apiUrl}${path}`, body, { headers: this.headers });
   }
 
+  patch<T>(path: string, body: any): Observable<T> {
+    return this.http.patch<T>(`${environment.apiUrl}${path}`, body, { headers: this.headers });
+  }
+
   delete<T>(path: string): Observable<T> {
     return this.http.delete<T>(`${environment.apiUrl}${path}`, { headers: this.headers });
   }

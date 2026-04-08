@@ -135,3 +135,41 @@ export async function deleteProducto(req: Request, res: Response): Promise<void>
     res.status(500).json({ error: 'Error al eliminar el producto' });
   }
 }
+
+export async function toggleAgotado(req: Request, res: Response): Promise<void> {
+  try {
+    const productoId = parseInt(req.params.id, 10);
+    if (isNaN(productoId)) {
+      res.status(400).json({ error: 'ID de producto inválido' });
+      return;
+    }
+
+    const producto = await prisma.producto.findUnique({ where: { id: productoId } });
+    if (!producto) {
+      res.status(404).json({ error: 'Producto no encontrado' });
+      return;
+    }
+
+    const userRole = req.user!.role;
+
+    // Cocinero solo puede marcar comida, bartender solo bebida
+    if (userRole === 'cocinero' && producto.tipo !== 'comida') {
+      res.status(403).json({ error: 'Solo puedes marcar productos de comida' });
+      return;
+    }
+    if (userRole === 'bartender' && producto.tipo !== 'bebida') {
+      res.status(403).json({ error: 'Solo puedes marcar productos de bebida' });
+      return;
+    }
+
+    const updated = await prisma.producto.update({
+      where: { id: productoId },
+      data: { agotado: !producto.agotado },
+    });
+
+    res.json(updated);
+  } catch (error) {
+    console.error('[toggleAgotado]', error);
+    res.status(500).json({ error: 'Error al actualizar stock' });
+  }
+}

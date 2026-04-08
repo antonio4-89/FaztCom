@@ -7,6 +7,7 @@ export interface Producto {
   price: number;
   tipo: ProductoTipo;
   active: boolean;
+  agotado?: boolean;
 }
 
 export interface MenuGroup { cat: string; items: Producto[]; }

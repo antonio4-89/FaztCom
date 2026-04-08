@@ -3,13 +3,6 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { UsuariosService } from '../../../core/services/usuarios.service';
 import { User, Role } from '../../../core/models/user.model';
 
-const ROLES = [
-  { label: '👑 Admin',      value: 'admin' },
-  { label: '📋 Mesero',     value: 'mesero' },
-  { label: '🔥 Cocinero',   value: 'cocinero' },
-  { label: '🍸 Bartender',  value: 'bartender' },
-];
-
 @Component({
   selector: 'app-usuarios',
   templateUrl: 'usuarios.page.html',
@@ -19,6 +12,14 @@ const ROLES = [
 export class UsuariosPage implements OnInit {
   usuarios: User[] = [];
   loading = false;
+
+  // Inline form state
+  formVisible = false;
+  editingUser: User | null = null;
+  formName = '';
+  formEmail = '';
+  formRole: Role = 'mesero';
+  formLoading = false;
 
   constructor(
     private svc: UsuariosService,
@@ -42,72 +43,72 @@ export class UsuariosPage implements OnInit {
 
   roleBadgeClass(role: Role): string { return 'role-' + role; }
 
-  async newUsuario() {
-    const alert = await this.alertCtrl.create({
-      header: 'Registrar Usuario',
-      subHeader: 'Se enviará un código de acceso al correo',
-      cssClass: 'role-alert',
-      inputs: [
-        { name: 'name',  type: 'text',  placeholder: 'Nombre completo' },
-        { name: 'email', type: 'email', placeholder: 'correo@fastcom.mx' },
-        ...ROLES.map(r => ({
-          name: 'role', type: 'radio' as any,
-          label: r.label, value: r.value,
-          checked: r.value === 'mesero',
-        })),
-      ],
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Registrar',
-          handler: data => {
-            if (!data.name?.trim() || !data.email?.trim() || !data.role) {
-              this.showToast('Completa todos los campos', 'warning');
-              return false;
-            }
-            this.svc.createUsuario({ name: data.name.trim(), email: data.email.trim(), role: data.role }).subscribe({
-              next: () => {
-                this.load();
-                this.showToast('Usuario registrado — código enviado al correo ✉️');
-              },
-              error: (e) => this.showToast(e?.error?.error || 'Error al registrar', 'danger'),
-            });
-            return true;
-          },
-        },
-      ],
-    });
-    await alert.present();
+  // Form helpers
+  openForm(user?: User) {
+    this.editingUser = user || null;
+    this.formName = user?.name || '';
+    this.formEmail = user?.email || '';
+    this.formRole = user?.role || 'mesero';
+    this.formVisible = true;
   }
 
-  async editUsuario(u: User) {
-    const alert = await this.alertCtrl.create({
-      header: 'Editar Usuario',
-      cssClass: 'role-alert',
-      inputs: [
-        { name: 'name', type: 'text', value: u.name, placeholder: 'Nombre' },
-        ...ROLES.map(r => ({
-          name: 'role', type: 'radio' as any,
-          label: r.label, value: r.value,
-          checked: r.value === u.role,
-        })),
-      ],
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Guardar',
-          handler: data => {
-            if (!data.name?.trim() || !data.role) return false;
-            this.svc.updateUsuario(u.id, { name: data.name.trim(), role: data.role }).subscribe({
-              next: () => { this.load(); this.showToast('Usuario actualizado'); },
-              error: () => this.showToast('Error al actualizar', 'danger'),
-            });
-            return true;
-          },
+  cancelForm() {
+    this.formVisible = false;
+    this.editingUser = null;
+  }
+
+  editUsuario(u: User) { this.openForm(u); }
+
+  submitForm() {
+    if (!this.formName.trim()) {
+      this.showToast('Ingresa un nombre', 'warning');
+      return;
+    }
+    if (!this.formRole) {
+      this.showToast('Selecciona un rol', 'warning');
+      return;
+    }
+
+    this.formLoading = true;
+
+    if (this.editingUser) {
+      // Edit
+      this.svc.updateUsuario(this.editingUser.id, {
+        name: this.formName.trim(),
+        role: this.formRole,
+      }).subscribe({
+        next: () => {
+          this.formLoading = false;
+          this.cancelForm();
+          this.load();
+          this.showToast('Usuario actualizado');
         },
-      ],
-    });
-    await alert.present();
+        error: () => { this.formLoading = false; this.showToast('Error al actualizar', 'danger'); },
+      });
+    } else {
+      // Create
+      if (!this.formEmail.trim()) {
+        this.formLoading = false;
+        this.showToast('Ingresa un correo', 'warning');
+        return;
+      }
+      this.svc.createUsuario({
+        name: this.formName.trim(),
+        email: this.formEmail.trim(),
+        role: this.formRole,
+      }).subscribe({
+        next: () => {
+          this.formLoading = false;
+          this.cancelForm();
+          this.load();
+          this.showToast('Usuario registrado — código enviado al correo ✉️');
+        },
+        error: (e) => {
+          this.formLoading = false;
+          this.showToast(e?.error?.error || 'Error al registrar', 'danger');
+        },
+      });
+    }
   }
 
   async deleteUsuario(u: User) {

@@ -6,6 +6,7 @@ import {
   emitNuevaComandaBarra,
   emitComandaActualizada,
   emitPedidoListoMesero,
+  emitMesaActualizada,
 } from '../socket';
 
 interface CreateComandaItem {
@@ -61,30 +62,60 @@ export async function getComandas(req: Request, res: Response): Promise<void> {
 
 export async function createComanda(req: Request, res: Response): Promise<void> {
   try {
-    const { notaId, items } = req.body as {
-      notaId: number;
+    const { notaId, mesaId, items } = req.body as {
+      notaId?: number;
+      mesaId?: number;
       items: CreateComandaItem[];
     };
 
-    if (!notaId || !items || !Array.isArray(items) || items.length === 0) {
-      res.status(400).json({ error: 'notaId e items son requeridos' });
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      res.status(400).json({ error: 'items son requeridos' });
       return;
     }
 
-    const nota = await prisma.nota.findUnique({
-      where: { id: notaId },
-      include: { mesa: true },
-    });
-
-    if (!nota) {
-      res.status(404).json({ error: 'Nota no encontrada' });
+    if (!notaId && !mesaId) {
+      res.status(400).json({ error: 'notaId o mesaId es requerido' });
       return;
+    }
+
+    let nota;
+
+    if (notaId) {
+      nota = await prisma.nota.findUnique({
+        where: { id: notaId },
+        include: { mesa: true },
+      });
+      if (!nota) {
+        res.status(404).json({ error: 'Nota no encontrada' });
+        return;
+      }
+    } else {
+      // Find or create open nota for this mesa
+      const meseroId = req.user!.id;
+      nota = await prisma.nota.findFirst({
+        where: { mesaId: mesaId!, status: 'abierta' },
+        include: { mesa: true },
+      });
+      if (!nota) {
+        nota = await prisma.nota.create({
+          data: { mesaId: mesaId!, meseroId, status: 'abierta' },
+          include: { mesa: true },
+        });
+        // Update mesa status to abierta
+        const updatedMesa = await prisma.mesa.update({
+          where: { id: mesaId! },
+          data: { status: 'abierta' },
+        });
+        emitMesaActualizada(updatedMesa);
+      }
     }
 
     if (nota.status !== 'abierta') {
       res.status(400).json({ error: 'La nota está cerrada' });
       return;
     }
+
+    const resolvedNotaId = nota.id;
 
     // Split items by tipo
     const cocinaItems = items.filter((i) => i.tipo === 'comida');
@@ -96,7 +127,7 @@ export async function createComanda(req: Request, res: Response): Promise<void> 
     if (cocinaItems.length > 0) {
       const comanda = await prisma.comanda.create({
         data: {
-          notaId,
+          notaId: resolvedNotaId,
           destino: ComandaDestino.cocina,
           status: ComandaStatus.pendiente,
           items: {
@@ -124,7 +155,7 @@ export async function createComanda(req: Request, res: Response): Promise<void> 
     if (barraItems.length > 0) {
       const comanda = await prisma.comanda.create({
         data: {
-          notaId,
+          notaId: resolvedNotaId,
           destino: ComandaDestino.barra,
           status: ComandaStatus.pendiente,
           items: {

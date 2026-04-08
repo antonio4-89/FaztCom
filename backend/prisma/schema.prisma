@@ -136,6 +136,7 @@ model Producto {
   price     Float             @default(0)
   tipo      ProductoTipo
   active    Boolean           @default(true)
+  agotado   Boolean           @default(false)
   createdAt DateTime          @default(now())
 
   comandaItems ComandaItem[]

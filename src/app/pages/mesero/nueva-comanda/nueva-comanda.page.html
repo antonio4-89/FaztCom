@@ -48,10 +48,13 @@
         <div *ngFor="let group of filteredMenu" class="menu-group">
           <div class="group-title">{{ group.cat }}</div>
           <div class="products-grid">
-            <button *ngFor="let p of group.items" class="product-card" (click)="addItem(p)">
+            <button *ngFor="let p of group.items" class="product-card"
+                  [class.agotado]="p.agotado" [disabled]="p.agotado"
+                  (click)="addItem(p)">
               <div class="product-name">{{ p.name }}</div>
-              <div class="product-price" *ngIf="p.price > 0">${{ p.price }}</div>
-              <div class="product-price muted" *ngIf="p.price === 0">Sin precio</div>
+              <span *ngIf="p.agotado" class="agotado-badge">Agotado</span>
+              <div class="product-price" *ngIf="p.price > 0 && !p.agotado">${{ p.price }}</div>
+              <div class="product-price muted" *ngIf="p.price === 0 && !p.agotado">Sin precio</div>
             </button>
           </div>
         </div>

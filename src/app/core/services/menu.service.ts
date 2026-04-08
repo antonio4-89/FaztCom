@@ -27,4 +27,5 @@ export class MenuService {
   createProducto(p: Partial<Producto>): Observable<Producto> { return this.api.post<Producto>('/menu', p); }
   updateProducto(id: number, p: Partial<Producto>): Observable<Producto> { return this.api.put<Producto>(`/menu/${id}`, p); }
   deleteProducto(id: number): Observable<any> { return this.api.delete<any>(`/menu/${id}`); }
+  toggleAgotado(id: number): Observable<Producto> { return this.api.patch<Producto>(`/menu/${id}/stock`, {}); }
 }

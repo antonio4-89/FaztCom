@@ -31,30 +31,31 @@ export class MenuAdminPage implements OnInit {
 
   get tipoKeys(): string[] { return Object.keys(this.menu); }
 
-  async newProducto() {
-    const alert = await this.alertCtrl.create({
-      header: 'Agregar Producto',
-      inputs: [
-        { name: 'name',      type: 'text',   placeholder: 'Nombre' },
-        { name: 'categoria', type: 'text',   placeholder: 'Categoría (ej: Pizzas)' },
-        { name: 'price',     type: 'number', placeholder: 'Precio' },
-        { name: 'tipo',      type: 'text',   placeholder: 'comida o bebida' },
-      ],
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Agregar',
-          handler: data => {
-            if (!data.name || !data.tipo) return false;
-            this.svc.createProducto({ name: data.name, categoria: data.categoria, price: Number(data.price) || 0, tipo: data.tipo, active: true }).subscribe({
-              next: () => { this.load(); this.showToast('Producto agregado'); },
-            });
-            return true;
-          },
-        },
-      ],
+  // Form state for new product
+  formVisible = false;
+  fName = ''; fCategoria = ''; fPrice = 0; fTipo: 'comida' | 'bebida' = 'comida';
+
+  openNewForm() {
+    this.fName = ''; this.fCategoria = ''; this.fPrice = 0; this.fTipo = 'comida';
+    this.formVisible = true;
+  }
+
+  submitNewProduct() {
+    if (!this.fName.trim() || !this.fCategoria.trim()) {
+      this.showToast('Nombre y categoría requeridos', 'warning');
+      return;
+    }
+    this.svc.createProducto({ name: this.fName.trim(), categoria: this.fCategoria.trim(), price: this.fPrice || 0, tipo: this.fTipo, active: true }).subscribe({
+      next: () => { this.formVisible = false; this.load(); this.showToast('Producto agregado'); },
+      error: () => this.showToast('Error al agregar', 'danger'),
     });
-    await alert.present();
+  }
+
+  toggleAgotado(p: Producto) {
+    this.svc.toggleAgotado(p.id).subscribe({
+      next: () => { this.load(); this.showToast(p.agotado ? 'Producto disponible' : 'Marcado como agotado'); },
+      error: () => this.showToast('Error al cambiar stock', 'danger'),
+    });
   }
 
   async editProducto(p: Producto) {
@@ -94,8 +95,8 @@ export class MenuAdminPage implements OnInit {
     await alert.present();
   }
 
-  private async showToast(msg: string) {
-    const t = await this.toast.create({ message: msg, duration: 2000, position: 'top', color: 'success' });
+  private async showToast(msg: string, color = 'success') {
+    const t = await this.toast.create({ message: msg, duration: 2000, position: 'top', color });
     await t.present();
   }
 }

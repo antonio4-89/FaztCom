@@ -8,9 +8,47 @@
 <ion-content class="ion-padding">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:10px">
     <h1 class="fc-h1">Usuarios</h1>
-    <button class="btn-primary" (click)="newUsuario()">+ Registrar usuario</button>
+    <button class="btn-primary" (click)="openForm()">+ Registrar usuario</button>
   </div>
   <p class="fc-muted" style="margin-bottom:20px">Al registrar, se enviará un código de acceso al correo del usuario.</p>
+
+  <!-- INLINE FORM (crear / editar) -->
+  <div *ngIf="formVisible" class="fc-card form-card anim-up" style="margin-bottom:16px">
+    <h2 class="fc-h2" style="margin-bottom:12px">{{ editingUser ? 'Editar Usuario' : 'Registrar Usuario' }}</h2>
+
+    <div class="form-fields">
+      <div class="field">
+        <label class="field-label">Nombre completo</label>
+        <input class="fc-input" [(ngModel)]="formName" placeholder="Nombre del usuario"/>
+      </div>
+
+      <div class="field" *ngIf="!editingUser">
+        <label class="field-label">Correo electrónico</label>
+        <input class="fc-input" type="email" [(ngModel)]="formEmail" placeholder="correo@fastcom.mx"/>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Rol</label>
+        <ion-select
+          class="fc-select"
+          interface="popover"
+          [(ngModel)]="formRole"
+          placeholder="Seleccionar rol">
+          <ion-select-option value="admin">👑 Admin</ion-select-option>
+          <ion-select-option value="mesero">📋 Mesero</ion-select-option>
+          <ion-select-option value="cocinero">🔥 Cocinero</ion-select-option>
+          <ion-select-option value="bartender">🍸 Bartender</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn-primary" (click)="submitForm()" [disabled]="formLoading">
+        {{ formLoading ? 'Guardando...' : (editingUser ? 'Guardar' : 'Registrar') }}
+      </button>
+      <button class="btn-soft btn-danger" (click)="cancelForm()">Cancelar</button>
+    </div>
+  </div>
 
   <div *ngIf="loading" style="text-align:center;padding:40px">
     <ion-spinner name="crescent" color="warning"></ion-spinner>

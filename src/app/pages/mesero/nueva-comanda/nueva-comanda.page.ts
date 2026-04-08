@@ -130,7 +130,7 @@ export class NuevaComandaPage implements OnInit {
     const payload = {
       mesaId: this.mesaId,
       items: this.items.map(i => ({
-        name: i.name,
+        customName: i.isCustom ? i.name : undefined,
         qty: i.qty,
         price: i.price,
         tipo: i.tipo,
