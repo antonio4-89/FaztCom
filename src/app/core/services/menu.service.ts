@@ -24,6 +24,7 @@ export class MenuService {
     );
   }
 
+  getCategorias(): Observable<Record<string, string[]>> { return this.api.get<Record<string, string[]>>('/menu/categorias'); }
   createProducto(p: Partial<Producto>): Observable<Producto> { return this.api.post<Producto>('/menu', p); }
   updateProducto(id: number, p: Partial<Producto>): Observable<Producto> { return this.api.put<Producto>(`/menu/${id}`, p); }
   deleteProducto(id: number): Observable<any> { return this.api.delete<any>(`/menu/${id}`); }

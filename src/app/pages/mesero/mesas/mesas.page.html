@@ -20,47 +20,77 @@
     <span class="legend-item"><span class="dot dot-libre"></span> Disponible</span>
     <span class="legend-item"><span class="dot dot-abierta"></span> Ocupada</span>
     <span class="legend-item"><span class="dot dot-cerrada"></span> Cerrada</span>
+    <span class="legend-item"><span class="dot dot-limpiar"></span> Por limpiar</span>
+  </div>
+
+  <div *ngIf="loading" style="text-align:center;padding:60px">
+    <ion-spinner name="crescent" color="warning"></ion-spinner>
+  </div>
+
+  <!-- Para Llevar -->
+  <div class="section-block anim-up" *ngIf="!loading">
+    <div class="section-header">
+      <span class="badge sec-PL">Para Llevar</span>
+      <span class="fc-h3">Pedidos para llevar</span>
+    </div>
+    <div class="mesas-grid">
+      <button class="mesa-card mesa-pl" (click)="nuevaParaLlevar()">
+        <div class="mesa-tipo">PARA LLEVAR</div>
+        <div class="mesa-id"><ion-icon name="bag-handle-outline"></ion-icon></div>
+        <div class="mesa-status">+ Nueva orden</div>
+      </button>
+    </div>
   </div>
 
   <!-- PM Section -->
-  <div class="section-block anim-up">
+  <div class="section-block anim-up" *ngIf="!loading">
     <div class="section-header">
       <span class="badge sec-PM">PM / Sala</span>
       <span class="fc-h3">Planta Media / Sala</span>
     </div>
     <div class="mesas-grid">
-      <button
-        *ngFor="let m of mesasPM"
-        class="mesa-card"
-        [class.mesa-abierta]="m.status === 'abierta'"
-        [class.mesa-cerrada]="m.status === 'cerrada'"
-        [class.mesa-disabled]="m.status === 'cerrada'"
-        (click)="selectMesa(m)">
-        <div class="mesa-tipo">{{ m.tipo === 'periquera' ? 'Periquera' : 'Mesa' }}</div>
-        <div class="mesa-id">{{ m.identifier }}</div>
-        <div class="mesa-status">{{ getStatusLabel(m.status) }}</div>
-      </button>
+      <div *ngFor="let m of mesasPM" class="mesa-card-wrap">
+        <button
+          class="mesa-card"
+          [class.mesa-abierta]="m.status === 'abierta'"
+          [class.mesa-cerrada]="m.status === 'cerrada'"
+          [class.mesa-limpiar]="m.status === 'limpiar'"
+          [class.mesa-disabled]="m.status === 'cerrada' || m.status === 'limpiar'"
+          (click)="selectMesa(m)">
+          <div class="mesa-tipo">{{ m.tipo === 'periquera' ? 'Periquera' : 'Mesa' }}</div>
+          <div class="mesa-id">{{ m.identifier }}</div>
+          <div class="mesa-status">{{ getStatusLabel(m.status) }}</div>
+        </button>
+        <button *ngIf="m.status === 'limpiar'" class="clean-btn" (click)="marcarLimpia(m)">
+          <ion-icon name="sparkles-outline"></ion-icon> Marcar limpia
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- T Section -->
-  <div class="section-block anim-up">
+  <div class="section-block anim-up" *ngIf="!loading">
     <div class="section-header">
       <span class="badge sec-T">Terraza</span>
       <span class="fc-h3">Terraza + Periqueras</span>
     </div>
     <div class="mesas-grid">
-      <button
-        *ngFor="let m of mesasT"
-        class="mesa-card"
-        [class.mesa-abierta]="m.status === 'abierta'"
-        [class.mesa-cerrada]="m.status === 'cerrada'"
-        [class.mesa-disabled]="m.status === 'cerrada'"
-        (click)="selectMesa(m)">
-        <div class="mesa-tipo">{{ m.tipo === 'periquera' ? 'Periquera' : 'Mesa' }}</div>
-        <div class="mesa-id">{{ m.identifier }}</div>
-        <div class="mesa-status">{{ getStatusLabel(m.status) }}</div>
-      </button>
+      <div *ngFor="let m of mesasT" class="mesa-card-wrap">
+        <button
+          class="mesa-card"
+          [class.mesa-abierta]="m.status === 'abierta'"
+          [class.mesa-cerrada]="m.status === 'cerrada'"
+          [class.mesa-limpiar]="m.status === 'limpiar'"
+          [class.mesa-disabled]="m.status === 'cerrada' || m.status === 'limpiar'"
+          (click)="selectMesa(m)">
+          <div class="mesa-tipo">{{ m.tipo === 'periquera' ? 'Periquera' : 'Mesa' }}</div>
+          <div class="mesa-id">{{ m.identifier }}</div>
+          <div class="mesa-status">{{ getStatusLabel(m.status) }}</div>
+        </button>
+        <button *ngIf="m.status === 'limpiar'" class="clean-btn" (click)="marcarLimpia(m)">
+          <ion-icon name="sparkles-outline"></ion-icon> Marcar limpia
+        </button>
+      </div>
     </div>
   </div>
 </ion-content>

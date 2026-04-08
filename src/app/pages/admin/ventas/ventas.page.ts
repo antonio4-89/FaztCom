@@ -12,6 +12,7 @@ export class VentasPage implements OnInit {
   loading = false;
   desde = '';
   hasta = '';
+  activeFilter = 'hoy';
 
   constructor(private svc: VentasService) {}
 
@@ -21,12 +22,48 @@ export class VentasPage implements OnInit {
     const today = new Date().toISOString().split('T')[0];
     this.desde = today;
     this.hasta = today;
+    this.activeFilter = 'hoy';
+    this.loadHistorial();
+  }
+
+  setSemana() {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    this.desde = monday.toISOString().split('T')[0];
+    this.hasta = now.toISOString().split('T')[0];
+    this.activeFilter = 'semana';
+    this.loadHistorial();
+  }
+
+  setMes() {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    this.desde = firstDay.toISOString().split('T')[0];
+    this.hasta = now.toISOString().split('T')[0];
+    this.activeFilter = 'mes';
+    this.loadHistorial();
+  }
+
+  setAnio() {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), 0, 1);
+    this.desde = firstDay.toISOString().split('T')[0];
+    this.hasta = now.toISOString().split('T')[0];
+    this.activeFilter = 'anio';
     this.loadHistorial();
   }
 
   clearFilter() {
     this.desde = '';
     this.hasta = '';
+    this.activeFilter = 'todo';
+    this.loadHistorial();
+  }
+
+  onDateChange() {
+    this.activeFilter = 'custom';
     this.loadHistorial();
   }
 

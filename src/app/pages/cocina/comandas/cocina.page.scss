@@ -17,3 +17,8 @@
 .bbtn { background: var(--fc-blue); color: #fff; }
 .gbtn { background: var(--fc-green); color: #fff; }
 .empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--fc-muted); }
+.item-done { opacity: .5; }
+.item-check { font-size: 14px; min-width: 20px; }
+.irow:hover { background: var(--fc-surface-alt); border-radius: 6px; }
+.btn-soft { padding: 6px 14px; border: 1px solid var(--fc-border); border-radius: 8px; background: var(--fc-surface); color: var(--fc-text); cursor: pointer; font-size: 12px; font-weight: 600; }
+.btn-soft.btn-info { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }

@@ -68,7 +68,7 @@ export function emitNuevaComandaBarra(comanda: object): void {
 }
 
 export function emitComandaActualizada(comanda: object): void {
-  if (io) io.to('cocina').to('barra').to('admin').emit('comanda-actualizada', comanda);
+  if (io) io.emit('comanda-actualizada', comanda);
 }
 
 export function emitPedidoListoMesero(meseroId: number, payload: object): void {
@@ -77,4 +77,8 @@ export function emitPedidoListoMesero(meseroId: number, payload: object): void {
 
 export function emitMesaActualizada(mesa: object): void {
   if (io) io.emit('mesa-actualizada', mesa);
+}
+
+export function emitMenuActualizado(producto: object): void {
+  if (io) io.emit('menu-actualizado', producto);
 }

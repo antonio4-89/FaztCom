@@ -34,6 +34,9 @@ log.txt
 npm-debug.log
 yarn-error.log
 
+# backend
+/backend/node_modules
+
 # IDEs and editors
 .idea/
 .project

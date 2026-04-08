@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Menu Bebidas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h1 class="fc-h1" style="margin-bottom:16px">Menu de Bebidas</h1>
+  <p class="fc-muted" style="margin-bottom:16px">Marca bebidas como agotadas para que los meseros no puedan ordenarlas.</p>
+
+  <div *ngIf="loading" style="text-align:center;padding:60px">
+    <ion-spinner name="crescent" color="warning"></ion-spinner>
+  </div>
+
+  <div *ngFor="let grp of menu" style="margin-bottom:18px">
+    <div class="cat-label">{{ grp.cat }}</div>
+    <div class="prod-grid">
+      <div *ngFor="let p of grp.items" class="fc-card prod-card" [class.is-agotado]="p.agotado">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:500;font-size:12px">{{ p.name }}</div>
+          <div *ngIf="p.price > 0" style="color:var(--fc-accent);font-weight:700;font-size:12px;margin-top:2px">${{ p.price }}</div>
+          <span *ngIf="p.agotado" class="agotado-tag">AGOTADO</span>
+        </div>
+        <button class="icon-btn stock-btn" [class.active-agotado]="p.agotado"
+                (click)="toggleAgotado(p)" [title]="p.agotado ? 'Marcar disponible' : 'Marcar agotado'">
+          {{ p.agotado ? '✅' : '🚫' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p *ngIf="!loading && menu.length === 0" class="fc-muted" style="text-align:center;padding:40px">Sin bebidas</p>
+</ion-content>

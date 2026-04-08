@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
+import { SocketService } from '../../../core/services/socket.service';
 import { Comanda } from '../../../core/models/comanda.model';
 
 @Component({
@@ -8,11 +10,17 @@ import { Comanda } from '../../../core/models/comanda.model';
   styleUrls: ['historial-barra.page.scss'],
   standalone: false
 })
-export class HistorialBarraPage implements OnInit {
+export class HistorialBarraPage implements OnInit, OnDestroy {
   comandas: Comanda[] = [];
+  recentListo: Comanda[] = [];
   loading = false;
+  private subs: Subscription[] = [];
+  private timers: any[] = [];
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private socket: SocketService,
+  ) {}
 
   ngOnInit() {
     this.loading = true;
@@ -20,5 +28,29 @@ export class HistorialBarraPage implements OnInit {
       next: d => { this.comandas = d; this.loading = false; },
       error: () => { this.loading = false; },
     });
+
+    this.socket.connect();
+    this.subs.push(
+      this.socket.onComandaActualizada().subscribe((c: Comanda) => {
+        if (c.destino === 'barra' && c.status === 'listo') {
+          if (!this.recentListo.find(x => x.id === c.id)) {
+            this.recentListo = [c, ...this.recentListo];
+            const timer = setTimeout(() => {
+              this.recentListo = this.recentListo.filter(x => x.id !== c.id);
+            }, 10000);
+            this.timers.push(timer);
+          }
+        }
+      }),
+    );
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(s => s.unsubscribe());
+    this.timers.forEach(t => clearTimeout(t));
+  }
+
+  itemNames(c: Comanda): string {
+    return c.items.map(i => (i.producto as any)?.name || i.customName || '').filter(Boolean).join(', ');
   }
 }

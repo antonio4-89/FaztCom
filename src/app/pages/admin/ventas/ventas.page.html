@@ -8,16 +8,21 @@
 <ion-content class="ion-padding">
   <h1 class="fc-h1" style="margin-bottom:16px">Ventas</h1>
 
-  <!-- Date filter -->
-  <div class="date-filter fc-card" style="margin-bottom:16px">
+  <!-- Period filter buttons -->
+  <div class="fc-card" style="margin-bottom:12px;padding:12px 16px">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      <button class="period-btn" [class.active]="activeFilter === 'hoy'" (click)="setHoy()">Hoy</button>
+      <button class="period-btn" [class.active]="activeFilter === 'semana'" (click)="setSemana()">Esta Semana</button>
+      <button class="period-btn" [class.active]="activeFilter === 'mes'" (click)="setMes()">Este Mes</button>
+      <button class="period-btn" [class.active]="activeFilter === 'anio'" (click)="setAnio()">Este Ano</button>
+      <button class="period-btn" [class.active]="activeFilter === 'todo'" (click)="clearFilter()">Todo</button>
+    </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <ion-icon name="calendar-outline" style="color:var(--fc-accent);font-size:18px"></ion-icon>
-      <span class="fc-muted" style="font-size:12px">Rango:</span>
-      <input type="date" class="date-input" [(ngModel)]="desde" (change)="loadHistorial()"/>
+      <span class="fc-muted" style="font-size:12px">Rango personalizado:</span>
+      <input type="date" class="date-input" [(ngModel)]="desde" (change)="onDateChange()"/>
       <span class="fc-muted">—</span>
-      <input type="date" class="date-input" [(ngModel)]="hasta" (change)="loadHistorial()"/>
-      <button class="btn-soft btn-info" (click)="setHoy()">Hoy</button>
-      <button class="btn-soft btn-warning" (click)="clearFilter()">Limpiar</button>
+      <input type="date" class="date-input" [(ngModel)]="hasta" (change)="onDateChange()"/>
     </div>
   </div>
 
@@ -37,6 +42,10 @@
         <div class="sum-value fc-num" style="color:var(--fc-purple)">${{ summary.ventasPM.toLocaleString() }}</div>
       </div>
       <div class="fc-card sum-card">
+        <div class="fc-muted sum-label">Para Llevar</div>
+        <div class="sum-value fc-num" style="color:var(--fc-blue)">${{ summary.ventasPL.toLocaleString() }}</div>
+      </div>
+      <div class="fc-card sum-card">
         <div class="fc-muted sum-label">En Caja</div>
         <div class="sum-value fc-num" style="color:var(--fc-green)">${{ summary.enCaja.toLocaleString() }}</div>
       </div>
@@ -51,9 +60,9 @@
       <div class="notas-list">
         <div *ngFor="let n of summary.notasCerradas" class="nota-row">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-weight:500">Mesa {{ n.mesa?.identifier || '—' }}</span>
-            <span class="badge" [class.sec-T]="n.mesa?.seccion==='T'" [class.sec-PM]="n.mesa?.seccion==='PM'">
-              {{ n.mesa?.seccion === 'T' ? 'Terraza' : 'PM/Sala' }}
+            <span style="font-weight:500">{{ n.paraLlevar ? 'Para Llevar' : ('Mesa ' + (n.mesa?.identifier || '—')) }}</span>
+            <span class="badge" [class.sec-T]="n.mesa?.seccion==='T'" [class.sec-PM]="n.mesa?.seccion==='PM'" [class.sec-PL]="n.paraLlevar">
+              {{ n.paraLlevar ? 'P/Llevar' : (n.mesa?.seccion === 'T' ? 'Terraza' : 'PM/Sala') }}
             </span>
             <span class="fc-muted" style="font-size:12px">{{ n.mesero?.name }}</span>
             <span class="fc-dim" style="font-size:11px">{{ n.closedAt | date:'dd/MM HH:mm' }}</span>

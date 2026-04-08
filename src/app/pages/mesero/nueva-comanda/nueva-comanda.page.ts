@@ -24,6 +24,7 @@ interface CartItem {
 export class NuevaComandaPage implements OnInit {
   mesa = '';
   mesaId = 0;
+  paraLlevar = false;
   tipo: 'comida' | 'bebida' = 'comida';
   catFilter = 'all';
   menu: Record<string, MenuGroup[]> = { comida: [], bebida: [] };
@@ -45,6 +46,10 @@ export class NuevaComandaPage implements OnInit {
     this.route.queryParams.subscribe(p => {
       this.mesa = p['mesa'] || '';
       this.mesaId = Number(p['mesaId']) || 0;
+      this.paraLlevar = p['paraLlevar'] === 'true';
+      if (this.paraLlevar) {
+        this.mesa = 'Para Llevar';
+      }
     });
     this.menuService.getMenu().subscribe({
       next: m => { this.menu = m; },
@@ -127,8 +132,7 @@ export class NuevaComandaPage implements OnInit {
       return;
     }
     this.loading = true;
-    const payload = {
-      mesaId: this.mesaId,
+    const payload: any = {
       items: this.items.map(i => ({
         customName: i.isCustom ? i.name : undefined,
         qty: i.qty,
@@ -137,6 +141,11 @@ export class NuevaComandaPage implements OnInit {
         productoId: i.productoId || null,
       })),
     };
+    if (this.paraLlevar) {
+      payload.paraLlevar = true;
+    } else {
+      payload.mesaId = this.mesaId;
+    }
     this.comandasService.createComanda(payload).subscribe({
       next: async () => {
         this.loading = false;

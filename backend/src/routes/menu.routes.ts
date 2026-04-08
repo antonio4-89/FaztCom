@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   getMenu,
+  getCategorias,
   createProducto,
   updateProducto,
   deleteProducto,
@@ -12,6 +13,9 @@ const router = Router();
 
 // GET /api/menu — all active products (authenticated)
 router.get('/', getMenu);
+
+// GET /api/menu/categorias — distinct categories by tipo
+router.get('/categorias', getCategorias);
 
 // POST /api/menu — create product (admin only)
 router.post('/', requireRole('admin'), createProducto);

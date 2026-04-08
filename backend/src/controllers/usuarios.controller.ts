@@ -7,6 +7,7 @@ import prisma from '../lib/prisma';
 export async function getUsuarios(_req: Request, res: Response): Promise<void> {
   try {
     const usuarios = await prisma.user.findMany({
+      where: { active: true },
       select: {
         id: true,
         name: true,
@@ -197,13 +198,22 @@ export async function deleteUsuario(req: Request, res: Response): Promise<void> 
       return;
     }
 
-    // Soft delete: set active to false
-    await prisma.user.update({
-      where: { id: usuarioId },
-      data: { active: false },
-    });
+    // Hard delete the user (cascade will handle related records)
+    // First check if user has notas — if so, soft-delete instead
+    const notasCount = await prisma.nota.count({ where: { meseroId: usuarioId } });
 
-    res.json({ message: 'Usuario desactivado correctamente' });
+    if (notasCount > 0) {
+      await prisma.user.update({
+        where: { id: usuarioId },
+        data: { active: false },
+      });
+      res.status(200).json({ message: 'Usuario desactivado correctamente' });
+    } else {
+      // Delete notifications first, then user
+      await prisma.notificacion.deleteMany({ where: { meseroId: usuarioId } });
+      await prisma.user.delete({ where: { id: usuarioId } });
+      res.status(200).json({ message: 'Usuario eliminado correctamente' });
+    }
   } catch (error) {
     console.error('[deleteUsuario]', error);
     res.status(500).json({ error: 'Error al eliminar el usuario' });

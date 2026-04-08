@@ -8,6 +8,7 @@ export interface ComandaItem {
   qty: number;
   price: number;
   tipo: 'comida' | 'bebida';
+  listo?: boolean;
   producto?: { name: string };
   name?: string;
 }
@@ -27,10 +28,11 @@ export interface Comanda {
 
 export interface Nota {
   id: number;
-  mesaId: number;
+  mesaId?: number;
   meseroId: number;
   status: 'abierta' | 'cerrada';
   total: number;
+  paraLlevar?: boolean;
   createdAt: string;
   closedAt?: string;
   mesa?: { id: number; identifier: string; seccion: string };

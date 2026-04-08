@@ -7,6 +7,26 @@
 
 <ion-content class="ion-padding">
   <h1 class="fc-h1" style="margin-bottom:20px">Historial &mdash; Barra</h1>
+
+  <div *ngIf="loading" style="text-align:center;padding:60px">
+    <ion-spinner name="crescent" color="warning"></ion-spinner>
+  </div>
+
+  <!-- Recent listo (auto-hide after 10s) -->
+  <div *ngIf="recentListo.length > 0" style="margin-bottom:16px">
+    <h2 class="fc-h2" style="margin-bottom:8px;color:var(--fc-green)">Recien completadas</h2>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div *ngFor="let c of recentListo" class="fc-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-left:3px solid var(--fc-green)">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span class="fc-h3">#{{ c.id }}</span>
+          <span class="fc-muted" style="font-size:12px">Mesa {{ c.nota?.mesa?.identifier || '—' }}</span>
+          <span class="fc-muted" style="font-size:12px">{{ itemNames(c) }}</span>
+        </div>
+        <span class="badge badge-listo">Listo</span>
+      </div>
+    </div>
+  </div>
+
   <div style="display:flex;flex-direction:column;gap:8px">
     <div *ngFor="let c of comandas" class="fc-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -21,8 +41,8 @@
         <span class="badge badge-entregado">Entregado</span>
       </div>
     </div>
-    <p *ngIf="!loading && comandas.length === 0" style="text-align:center;padding:60px 20px;color:var(--fc-muted)">
-      Sin historial aún
+    <p *ngIf="!loading && comandas.length === 0 && recentListo.length === 0" style="text-align:center;padding:60px 20px;color:var(--fc-muted)">
+      Sin historial aun
     </p>
   </div>
 </ion-content>

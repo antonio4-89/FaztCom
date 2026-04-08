@@ -157,13 +157,14 @@ export async function closeNota(req: Request, res: Response): Promise<void> {
       },
     });
 
-    // Update mesa: status=cerrada
-    const updatedMesa = await prisma.mesa.update({
-      where: { id: nota.mesaId },
-      data: { status: 'cerrada' },
-    });
-
-    emitMesaActualizada(updatedMesa);
+    // Update mesa: status=limpiar (waiter must mark as clean to free it)
+    if (nota.mesaId) {
+      const updatedMesa = await prisma.mesa.update({
+        where: { id: nota.mesaId },
+        data: { status: 'limpiar' },
+      });
+      emitMesaActualizada(updatedMesa);
+    }
 
     res.json(updatedNota);
   } catch (error) {

@@ -17,6 +17,7 @@ enum Role {
 enum Seccion {
   PM
   T
+  PL
 }
 
 enum MesaTipo {
@@ -28,6 +29,7 @@ enum MesaStatus {
   libre
   abierta
   cerrada
+  limpiar
 }
 
 enum NotaStatus {
@@ -50,20 +52,6 @@ enum ComandaDestino {
 enum ProductoTipo {
   comida
   bebida
-}
-
-enum ProductoCategoria {
-  Hamburguesas
-  Pizzas
-  Snacks
-  Naranjada
-  Refrescos
-  JugosBoing
-  SodasItalianas
-  Frappes
-  Helados
-  Cafes
-  Otros
 }
 
 model User {
@@ -92,14 +80,15 @@ model Mesa {
 
 model Nota {
   id        Int        @id @default(autoincrement())
-  mesaId    Int
+  mesaId    Int?
   meseroId  Int
   status    NotaStatus @default(abierta)
   total     Float      @default(0)
+  paraLlevar Boolean   @default(false)
   createdAt DateTime   @default(now())
   closedAt  DateTime?
 
-  mesa     Mesa      @relation(fields: [mesaId], references: [id])
+  mesa     Mesa?     @relation(fields: [mesaId], references: [id])
   mesero   User      @relation(fields: [meseroId], references: [id])
   comandas Comanda[]
 }
@@ -124,6 +113,7 @@ model ComandaItem {
   qty         Int
   price       Float
   tipo        ProductoTipo
+  listo       Boolean @default(false)
 
   comanda  Comanda   @relation(fields: [comandaId], references: [id])
   producto Producto? @relation(fields: [productoId], references: [id])
@@ -132,7 +122,7 @@ model ComandaItem {
 model Producto {
   id        Int               @id @default(autoincrement())
   name      String
-  categoria ProductoCategoria
+  categoria String
   price     Float             @default(0)
   tipo      ProductoTipo
   active    Boolean           @default(true)

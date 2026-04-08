@@ -19,22 +19,29 @@
         <label class="field-label">Nombre</label>
         <input class="fc-input" [(ngModel)]="fName" placeholder="Nombre del producto"/>
       </div>
-      <div class="field">
-        <label class="field-label">Categoría</label>
-        <input class="fc-input" [(ngModel)]="fCategoria" placeholder="Ej: Hamburguesas, Pizzas"/>
-      </div>
       <div class="form-row">
         <div class="field" style="flex:1">
-          <label class="field-label">Precio</label>
-          <input class="fc-input" type="number" [(ngModel)]="fPrice" placeholder="0"/>
-        </div>
-        <div class="field" style="flex:1">
           <label class="field-label">Tipo</label>
-          <ion-select class="fc-select" interface="popover" [(ngModel)]="fTipo" placeholder="Tipo">
+          <ion-select class="fc-select" interface="popover" [(ngModel)]="fTipo" (ionChange)="onTipoChange()" placeholder="Tipo">
             <ion-select-option value="comida">🍽 Comida</ion-select-option>
             <ion-select-option value="bebida">🍸 Bebida</ion-select-option>
           </ion-select>
         </div>
+        <div class="field" style="flex:1">
+          <label class="field-label">Categoría</label>
+          <ion-select class="fc-select" interface="popover" [(ngModel)]="fCategoria" placeholder="Seleccionar categoría">
+            <ion-select-option *ngFor="let cat of categoriasForTipo" [value]="cat">{{ cat }}</ion-select-option>
+            <ion-select-option value="__new__">+ Nueva categoría</ion-select-option>
+          </ion-select>
+        </div>
+      </div>
+      <div class="field" *ngIf="fCategoria === '__new__'">
+        <label class="field-label">Nombre de nueva categoría</label>
+        <input class="fc-input" [(ngModel)]="fNewCategoria" placeholder="Ej: Ensaladas, Smoothies..."/>
+      </div>
+      <div class="field">
+        <label class="field-label">Precio</label>
+        <input class="fc-input" type="number" [(ngModel)]="fPrice" placeholder="0"/>
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:14px">

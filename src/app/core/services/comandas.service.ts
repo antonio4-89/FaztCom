@@ -13,5 +13,6 @@ export class ComandasService {
   getComandasActivas(): Observable<any[]> { return this.api.get<Comanda[]>('/comandas/activas'); }
   createComanda(payload: any): Observable<any> { return this.api.post<any>('/comandas', payload); }
   updateStatus(id: number, status: ComandaStatus): Observable<any> { return this.api.put<any>(`/comandas/${id}/status`, { status }); }
+  toggleItemListo(comandaId: number, itemId: number): Observable<any> { return this.api.patch<any>(`/comandas/${comandaId}/items/${itemId}/listo`, {}); }
   removeItem(comandaId: number, itemId: number): Observable<any> { return this.api.delete<any>(`/comandas/${comandaId}/items/${itemId}`); }
 }

@@ -18,7 +18,36 @@
     </div>
   </div>
 
-  <div class="grid">
+  <!-- View toggle -->
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="btn-soft" [class.btn-info]="!showGrouped" (click)="showGrouped = false">Por comanda</button>
+    <button class="btn-soft" [class.btn-info]="showGrouped" (click)="showGrouped = true">Agrupado (ronda)</button>
+  </div>
+
+  <div *ngIf="loading" style="text-align:center;padding:60px">
+    <ion-spinner name="crescent" color="warning"></ion-spinner>
+  </div>
+
+  <!-- GROUPED VIEW -->
+  <div *ngIf="!loading && showGrouped">
+    <div *ngIf="groupedItems.length === 0" class="empty">Sin productos pendientes</div>
+    <div class="fc-card" style="margin-bottom:8px" *ngFor="let g of groupedItems">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px">
+        <div>
+          <span style="font-weight:700;font-size:18px;color:var(--fc-accent);margin-right:8px">x{{ g.totalQty }}</span>
+          <span style="font-weight:500">{{ g.name }}</span>
+        </div>
+      </div>
+      <div style="padding:0 14px 10px;display:flex;flex-wrap:wrap;gap:6px">
+        <span *ngFor="let s of g.sources" class="badge badge-pendiente" style="font-size:10px">
+          Mesa {{ s.mesa }} (x{{ s.qty }}) — #{{ s.comandaId }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NORMAL VIEW -->
+  <div class="grid" *ngIf="!loading && !showGrouped">
     <div
       *ngFor="let c of comandas"
       class="fc-card cmd"
@@ -48,9 +77,14 @@
       <hr class="fc-divider">
 
       <div class="itms">
-        <div *ngFor="let it of c.items" class="irow">
+        <div *ngFor="let it of c.items" class="irow" [class.item-done]="it.listo"
+             (click)="c.status !== 'listo' && c.status !== 'entregado' ? toggleItemListo(c, it) : null"
+             [style.cursor]="c.status !== 'listo' && c.status !== 'entregado' ? 'pointer' : 'default'">
+          <span class="item-check" *ngIf="c.status !== 'listo' && c.status !== 'entregado'">
+            {{ it.listo ? '✅' : '⬜' }}
+          </span>
           <span class="qty">{{ it.qty }}</span>
-          <span>{{ itemName(it) }}</span>
+          <span [style.text-decoration]="it.listo ? 'line-through' : 'none'">{{ itemName(it) }}</span>
         </div>
       </div>
 

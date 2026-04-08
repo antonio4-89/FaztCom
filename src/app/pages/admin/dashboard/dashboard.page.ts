@@ -24,7 +24,7 @@ export class DashboardPage implements OnInit {
       next: s => { this.summary = s; this.buildStats(); this.loading = false; },
       error: () => {
         // Use zeros on error so page still renders
-        this.summary = { ventasT: 0, ventasPM: 0, total: 0, gastos: 0, enCaja: 0, notasCerradas: [] };
+        this.summary = { ventasT: 0, ventasPM: 0, ventasPL: 0, total: 0, gastos: 0, enCaja: 0, notasCerradas: [] };
         this.buildStats();
         this.loading = false;
       },

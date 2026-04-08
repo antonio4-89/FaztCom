@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /d/cod/ionic/faztcom/backend/.env*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run:*)",
+      "Bash(npm start:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":3000\")",
+      "Bash(curl -s http://localhost:3000/health)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4200)",
+      "Bash(curl -s http://localhost:4200 -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:4200 -o /dev/null -w \"frontend: %{http_code}\")",
+      "Bash(taskkill /F /PID 35876)",
+      "Bash(wc -l /d/cod/ionic/faztcom/backend/src/routes/*.ts)",
+      "Bash(npx tsc:*)",
+      "Bash(npx ng:*)"
+    ]
+  }
+}

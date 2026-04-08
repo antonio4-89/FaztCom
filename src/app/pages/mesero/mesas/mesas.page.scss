@@ -27,6 +27,7 @@
 .dot-libre { background: var(--fc-dim); }
 .dot-abierta { background: var(--fc-accent); }
 .dot-cerrada { background: var(--fc-green); }
+.dot-limpiar { background: var(--fc-yellow); }
 
 .section-block {
   margin-bottom: 28px;
@@ -102,3 +103,38 @@
 
 .mesa-abierta .mesa-id { color: var(--fc-accent); }
 .mesa-cerrada .mesa-id { color: var(--fc-green); }
+.mesa-limpiar .mesa-id { color: var(--fc-yellow); }
+
+.mesa-card.mesa-limpiar {
+  border-color: var(--fc-yellow);
+  background: var(--fc-yellow-soft);
+}
+
+.mesa-card-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mesa-pl {
+  border-color: var(--fc-purple);
+  background: rgba(168, 85, 247, 0.08);
+  .mesa-id { color: var(--fc-purple); font-size: 28px; }
+}
+
+.clean-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 8px;
+  background: var(--fc-green);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  &:hover { opacity: 0.9; }
+}

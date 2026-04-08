@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { Producto, ProductoTipo, ProductoCategoria } from '@prisma/client';
+import { Producto, ProductoTipo } from '@prisma/client';
 import prisma from '../lib/prisma';
+import { emitMenuActualizado } from '../socket';
 
 type GroupedMenu = {
   comida: Record<string, Producto[]>;
@@ -31,6 +32,30 @@ export async function getMenu(_req: Request, res: Response): Promise<void> {
   } catch (error) {
     console.error('[getMenu]', error);
     res.status(500).json({ error: 'Error al obtener el menú' });
+  }
+}
+
+export async function getCategorias(_req: Request, res: Response): Promise<void> {
+  try {
+    const productos = await prisma.producto.findMany({
+      where: { active: true },
+      select: { tipo: true, categoria: true },
+      distinct: ['tipo', 'categoria'],
+      orderBy: { categoria: 'asc' },
+    });
+
+    const result: Record<string, string[]> = { comida: [], bebida: [] };
+    for (const p of productos) {
+      const key = p.tipo === 'comida' ? 'comida' : 'bebida';
+      if (!result[key].includes(p.categoria)) {
+        result[key].push(p.categoria);
+      }
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('[getCategorias]', error);
+    res.status(500).json({ error: 'Error al obtener categorias' });
   }
 }
 
@@ -84,7 +109,7 @@ export async function updateProducto(req: Request, res: Response): Promise<void>
 
     const updateData: Partial<{
       name: string;
-      categoria: ProductoCategoria;
+      categoria: string;
       price: number;
       tipo: ProductoTipo;
       active: boolean;
@@ -167,6 +192,7 @@ export async function toggleAgotado(req: Request, res: Response): Promise<void> 
       data: { agotado: !producto.agotado },
     });
 
+    emitMenuActualizado(updated);
     res.json(updated);
   } catch (error) {
     console.error('[toggleAgotado]', error);

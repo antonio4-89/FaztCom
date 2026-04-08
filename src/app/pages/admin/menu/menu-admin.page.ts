@@ -33,19 +33,43 @@ export class MenuAdminPage implements OnInit {
 
   // Form state for new product
   formVisible = false;
-  fName = ''; fCategoria = ''; fPrice = 0; fTipo: 'comida' | 'bebida' = 'comida';
+  fName = ''; fCategoria = ''; fNewCategoria = ''; fPrice = 0; fTipo: 'comida' | 'bebida' = 'comida';
+  categorias: Record<string, string[]> = { comida: [], bebida: [] };
 
   openNewForm() {
-    this.fName = ''; this.fCategoria = ''; this.fPrice = 0; this.fTipo = 'comida';
+    this.fName = ''; this.fCategoria = ''; this.fNewCategoria = ''; this.fPrice = 0; this.fTipo = 'comida';
     this.formVisible = true;
+    this.loadCategorias();
+  }
+
+  loadCategorias() {
+    this.svc.getCategorias().subscribe({
+      next: c => { this.categorias = c; },
+      error: () => {},
+    });
+  }
+
+  get categoriasForTipo(): string[] {
+    return this.categorias[this.fTipo] || [];
+  }
+
+  onTipoChange() {
+    this.fCategoria = '';
+    this.fNewCategoria = '';
+  }
+
+  get resolvedCategoria(): string {
+    if (this.fCategoria === '__new__') return this.fNewCategoria.trim();
+    return this.fCategoria;
   }
 
   submitNewProduct() {
-    if (!this.fName.trim() || !this.fCategoria.trim()) {
+    const cat = this.resolvedCategoria;
+    if (!this.fName.trim() || !cat) {
       this.showToast('Nombre y categoría requeridos', 'warning');
       return;
     }
-    this.svc.createProducto({ name: this.fName.trim(), categoria: this.fCategoria.trim(), price: this.fPrice || 0, tipo: this.fTipo, active: true }).subscribe({
+    this.svc.createProducto({ name: this.fName.trim(), categoria: cat, price: this.fPrice || 0, tipo: this.fTipo, active: true }).subscribe({
       next: () => { this.formVisible = false; this.load(); this.showToast('Producto agregado'); },
       error: () => this.showToast('Error al agregar', 'danger'),
     });

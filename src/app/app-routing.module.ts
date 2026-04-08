@@ -18,10 +18,12 @@ const routes: Routes = [
   // Cocina
   { path: 'cocina/comandas', canActivate: [AuthGuard], loadChildren: () => import('./pages/cocina/comandas/cocina.module').then(m => m.CocinaPageModule) },
   { path: 'cocina/historial', canActivate: [AuthGuard], loadChildren: () => import('./pages/cocina/historial/historial-cocina.module').then(m => m.HistorialCocinaPageModule) },
+  { path: 'cocina/menu', canActivate: [AuthGuard], loadChildren: () => import('./pages/cocina/menu/menu-cocina.module').then(m => m.MenuCocinaPageModule) },
 
   // Barra
   { path: 'barra/bebidas', canActivate: [AuthGuard], loadChildren: () => import('./pages/barra/bebidas/barra.module').then(m => m.BarraPageModule) },
   { path: 'barra/historial', canActivate: [AuthGuard], loadChildren: () => import('./pages/barra/historial/historial-barra.module').then(m => m.HistorialBarraPageModule) },
+  { path: 'barra/menu', canActivate: [AuthGuard], loadChildren: () => import('./pages/barra/menu/menu-barra.module').then(m => m.MenuBarraPageModule) },
 
   // Admin
   { path: 'admin/dashboard', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/dashboard/dashboard.module').then(m => m.DashboardPageModule) },

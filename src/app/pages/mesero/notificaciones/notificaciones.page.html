@@ -20,6 +20,10 @@
     <p class="fc-muted" *ngIf="unreadCount === 0">Todo al dia</p>
   </div>
 
+  <div *ngIf="loading" style="text-align:center;padding:60px">
+    <ion-spinner name="crescent" color="warning"></ion-spinner>
+  </div>
+
   <div class="empty-state" *ngIf="!loading && notifs.length === 0">
     <ion-icon name="notifications-off-outline"></ion-icon>
     <h3 class="fc-h3">Sin notificaciones</h3>

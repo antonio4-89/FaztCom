@@ -49,10 +49,12 @@ export class AppComponent implements OnInit {
       ],
       cocinero: [
         { label: 'Comandas', route: '/cocina/comandas', icon: 'flame-outline' },
+        { label: 'Menu Comidas', route: '/cocina/menu', icon: 'restaurant-outline' },
         { label: 'Historial', route: '/cocina/historial', icon: 'time-outline' },
       ],
       bartender: [
         { label: 'Bebidas', route: '/barra/bebidas', icon: 'wine-outline' },
+        { label: 'Menu Bebidas', route: '/barra/menu', icon: 'beer-outline' },
         { label: 'Historial', route: '/barra/historial', icon: 'time-outline' },
       ],
     };

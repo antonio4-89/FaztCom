@@ -73,9 +73,25 @@ export async function createComanda(req: Request, res: Response): Promise<void> 
       return;
     }
 
-    if (!notaId && !mesaId) {
-      res.status(400).json({ error: 'notaId o mesaId es requerido' });
+    const paraLlevar = req.body.paraLlevar === true;
+
+    if (!notaId && !mesaId && !paraLlevar) {
+      res.status(400).json({ error: 'notaId, mesaId o paraLlevar es requerido' });
       return;
+    }
+
+    // Validate no agotado products
+    const productoIds = items.filter(i => i.productoId).map(i => i.productoId!);
+    if (productoIds.length > 0) {
+      const agotados = await prisma.producto.findMany({
+        where: { id: { in: productoIds }, agotado: true },
+        select: { id: true, name: true },
+      });
+      if (agotados.length > 0) {
+        const names = agotados.map(p => p.name).join(', ');
+        res.status(400).json({ error: `Productos agotados: ${names}` });
+        return;
+      }
     }
 
     let nota;
@@ -89,6 +105,13 @@ export async function createComanda(req: Request, res: Response): Promise<void> 
         res.status(404).json({ error: 'Nota no encontrada' });
         return;
       }
+    } else if (paraLlevar) {
+      // Create a new nota for para llevar (no mesa)
+      const meseroId = req.user!.id;
+      nota = await prisma.nota.create({
+        data: { meseroId, status: 'abierta', paraLlevar: true },
+        include: { mesa: true },
+      });
     } else {
       // Find or create open nota for this mesa
       const meseroId = req.user!.id;
@@ -244,13 +267,13 @@ export async function updateStatus(req: Request, res: Response): Promise<void> {
     // If status is 'listo', notify the mesero
     if (status === 'listo') {
       const meseroId = comanda.nota.meseroId;
-      const mesaIdentifier = comanda.nota.mesa.identifier;
+      const mesaIdentifier = comanda.nota.mesa?.identifier || 'Para Llevar';
 
       // Create notification record
       await prisma.notificacion.create({
         data: {
           meseroId,
-          message: `Comanda lista en ${comanda.destino} — Mesa ${mesaIdentifier}`,
+          message: `Comanda lista en ${comanda.destino} — ${comanda.nota.mesa ? 'Mesa ' + mesaIdentifier : 'Para Llevar'}`,
           tipo: comanda.destino,
         },
       });
@@ -302,6 +325,45 @@ export async function removeItem(req: Request, res: Response): Promise<void> {
   } catch (error) {
     console.error('[removeItem]', error);
     res.status(500).json({ error: 'Error al eliminar el item' });
+  }
+}
+
+export async function toggleItemListo(req: Request, res: Response): Promise<void> {
+  try {
+    const comandaId = parseInt(req.params.id, 10);
+    const itemId = parseInt(req.params.itemId, 10);
+
+    if (isNaN(comandaId) || isNaN(itemId)) {
+      res.status(400).json({ error: 'ID inválido' });
+      return;
+    }
+
+    const item = await prisma.comandaItem.findUnique({ where: { id: itemId } });
+    if (!item || item.comandaId !== comandaId) {
+      res.status(404).json({ error: 'Item no encontrado' });
+      return;
+    }
+
+    const updated = await prisma.comandaItem.update({
+      where: { id: itemId },
+      data: { listo: !item.listo },
+    });
+
+    // Re-fetch full comanda to broadcast
+    const comanda = await prisma.comanda.findUnique({
+      where: { id: comandaId },
+      include: {
+        items: { include: { producto: true } },
+        nota: { include: { mesa: { select: { id: true, identifier: true } } } },
+      },
+    });
+
+    if (comanda) emitComandaActualizada(comanda);
+
+    res.json(updated);
+  } catch (error) {
+    console.error('[toggleItemListo]', error);
+    res.status(500).json({ error: 'Error al actualizar item' });
   }
 }
 

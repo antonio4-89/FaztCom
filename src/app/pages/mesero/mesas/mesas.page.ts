@@ -78,14 +78,27 @@ export class MesasPage implements OnInit, OnDestroy {
       libre: 'Disponible',
       abierta: 'Ocupada',
       cerrada: 'Cerrada',
+      limpiar: 'Por limpiar',
     };
     return labels[status] || status;
   }
 
   selectMesa(mesa: Mesa) {
-    if (mesa.status === 'cerrada') return;
+    if (mesa.status === 'cerrada' || mesa.status === 'limpiar') return;
     this.router.navigate(['/mesero/nueva-comanda'], {
       queryParams: { mesa: mesa.identifier, mesaId: mesa.id },
+    });
+  }
+
+  marcarLimpia(mesa: Mesa) {
+    this.mesasService.updateMesaStatus(mesa.id, 'libre').subscribe({
+      next: () => { mesa.status = 'libre'; },
+    });
+  }
+
+  nuevaParaLlevar() {
+    this.router.navigate(['/mesero/nueva-comanda'], {
+      queryParams: { paraLlevar: 'true' },
     });
   }
 }

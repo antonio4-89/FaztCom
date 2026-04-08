@@ -19,14 +19,18 @@ export async function getVentas(_req: Request, res: Response): Promise<void> {
 
     // Split by seccion
     const ventasT = notas
-      .filter((n) => n.mesa.seccion === 'T')
+      .filter((n) => n.mesa?.seccion === 'T')
       .reduce((sum, n) => sum + n.total, 0);
 
     const ventasPM = notas
-      .filter((n) => n.mesa.seccion === 'PM')
+      .filter((n) => n.mesa?.seccion === 'PM')
       .reduce((sum, n) => sum + n.total, 0);
 
-    const total = ventasT + ventasPM;
+    const ventasPL = notas
+      .filter((n) => n.paraLlevar || !n.mesa)
+      .reduce((sum, n) => sum + n.total, 0);
+
+    const total = ventasT + ventasPM + ventasPL;
 
     // Get gastos for today
     const gastos = await prisma.gasto.findMany({
@@ -40,6 +44,7 @@ export async function getVentas(_req: Request, res: Response): Promise<void> {
     res.json({
       ventasT,
       ventasPM,
+      ventasPL,
       total,
       gastos: totalGastos,
       enCaja: total - totalGastos,
@@ -89,14 +94,18 @@ export async function getHistorialVentas(req: Request, res: Response): Promise<v
 
     // Calculate summary
     const ventasT = notas
-      .filter((n) => n.mesa.seccion === 'T')
+      .filter((n) => n.mesa?.seccion === 'T')
       .reduce((sum, n) => sum + n.total, 0);
 
     const ventasPM = notas
-      .filter((n) => n.mesa.seccion === 'PM')
+      .filter((n) => n.mesa?.seccion === 'PM')
       .reduce((sum, n) => sum + n.total, 0);
 
-    const total = ventasT + ventasPM;
+    const ventasPL = notas
+      .filter((n) => n.paraLlevar || !n.mesa)
+      .reduce((sum, n) => sum + n.total, 0);
+
+    const total = ventasT + ventasPM + ventasPL;
 
     // Get gastos for the same range
     const gastosWhere: { date?: { gte?: Date; lte?: Date } } = {};
@@ -116,6 +125,7 @@ export async function getHistorialVentas(req: Request, res: Response): Promise<v
     res.json({
       ventasT,
       ventasPM,
+      ventasPL,
       total,
       gastos: totalGastos,
       enCaja: total - totalGastos,

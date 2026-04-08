@@ -5,6 +5,7 @@ import { ApiService } from './api.service';
 export interface VentasSummary {
   ventasT: number;
   ventasPM: number;
+  ventasPL: number;
   total: number;
   gastos: number;
   enCaja: number;

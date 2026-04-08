@@ -11,7 +11,21 @@
   outline: none;
   &:focus { border-color: var(--fc-accent); }
 }
-.sum-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.period-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--fc-border);
+  border-radius: 8px;
+  background: var(--fc-surface);
+  color: var(--fc-text);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+  &:hover { border-color: var(--fc-accent); }
+  &.active { background: var(--fc-accent); color: #fff; border-color: var(--fc-accent); }
+}
+.sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .sum-card { text-align: center; }
 .sum-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
 .sum-value { font-size: 28px; font-weight: 800; margin-top: 6px; }
@@ -19,5 +33,5 @@
 .nota-row { display: flex; align-items: center; justify-content: space-between; background: var(--fc-surface-alt); border-radius: 8px; padding: 9px 12px; flex-wrap: wrap; gap: 8px; }
 
 @media (max-width: 600px) {
-  .sum-grid { grid-template-columns: 1fr; }
+  .sum-grid { grid-template-columns: repeat(2, 1fr); }
 }

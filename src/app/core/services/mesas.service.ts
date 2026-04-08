@@ -9,4 +9,5 @@ export class MesasService {
   constructor(private api: ApiService) {}
   getMesas(): Observable<Mesa[]> { return this.api.get<Mesa[]>('/mesas'); }
   getNotaByMesa(mesaId: number): Observable<Nota> { return this.api.get<Nota>(`/mesas/${mesaId}/nota`); }
+  updateMesaStatus(mesaId: number, status: string): Observable<Mesa> { return this.api.put<Mesa>(`/mesas/${mesaId}/status`, { status }); }
 }
