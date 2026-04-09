@@ -46,7 +46,8 @@ export async function getComandas(req: Request, res: Response): Promise<void> {
         },
         nota: {
           include: {
-            mesa: { select: { id: true, identifier: true } },
+            mesa: { select: { id: true, identifier: true, seccion: true } },
+            mesero: { select: { id: true, name: true } },
           },
         },
       },
@@ -166,7 +167,7 @@ export async function createComanda(req: Request, res: Response): Promise<void> 
         },
         include: {
           items: { include: { producto: true } },
-          nota: { include: { mesa: { select: { id: true, identifier: true } } } },
+          nota: { include: { mesa: { select: { id: true, identifier: true, seccion: true } }, mesero: { select: { id: true, name: true } } } },
         },
       });
 
@@ -194,7 +195,7 @@ export async function createComanda(req: Request, res: Response): Promise<void> 
         },
         include: {
           items: { include: { producto: true } },
-          nota: { include: { mesa: { select: { id: true, identifier: true } } } },
+          nota: { include: { mesa: { select: { id: true, identifier: true, seccion: true } }, mesero: { select: { id: true, name: true } } } },
         },
       });
 
@@ -256,7 +257,8 @@ export async function updateStatus(req: Request, res: Response): Promise<void> {
         items: { include: { producto: true } },
         nota: {
           include: {
-            mesa: { select: { id: true, identifier: true } },
+            mesa: { select: { id: true, identifier: true, seccion: true } },
+            mesero: { select: { id: true, name: true } },
           },
         },
       },
@@ -354,7 +356,12 @@ export async function toggleItemListo(req: Request, res: Response): Promise<void
       where: { id: comandaId },
       include: {
         items: { include: { producto: true } },
-        nota: { include: { mesa: { select: { id: true, identifier: true } } } },
+        nota: {
+          include: {
+            mesa: { select: { id: true, identifier: true, seccion: true } },
+            mesero: { select: { id: true, name: true } },
+          },
+        },
       },
     });
 

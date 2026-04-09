@@ -31,16 +31,24 @@
   <!-- GROUPED VIEW -->
   <div *ngIf="!loading && showGrouped">
     <div *ngIf="groupedItems.length === 0" class="empty">Sin bebidas pendientes</div>
-    <div class="fc-card" style="margin-bottom:8px" *ngFor="let g of groupedItems">
+    <div class="fc-card" style="margin-bottom:8px" *ngFor="let g of groupedItems"
+         [class.dim]="g.allListo"
+         [style.border-left]="g.allListo ? '4px solid var(--fc-green)' : '4px solid var(--fc-yellow)'">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px">
-        <div>
+        <div [style.text-decoration]="g.allListo ? 'line-through' : 'none'">
           <span style="font-weight:700;font-size:18px;color:var(--fc-accent);margin-right:8px">x{{ g.totalQty }}</span>
           <span style="font-weight:500">{{ g.name }}</span>
         </div>
+        <button class="abtn" [class.gbtn]="!g.allListo" [class.bbtn]="g.allListo"
+                style="width:auto;padding:8px 16px;font-size:12px"
+                (click)="toggleGroupedListo(g)">
+          {{ g.allListo ? 'Desmarcar' : 'Listo' }}
+        </button>
       </div>
       <div style="padding:0 14px 10px;display:flex;flex-wrap:wrap;gap:6px">
-        <span *ngFor="let s of g.sources" class="badge badge-pendiente" style="font-size:10px">
-          Mesa {{ s.mesa }} (x{{ s.qty }}) — #{{ s.comandaId }}
+        <span *ngFor="let s of g.sources" class="badge" style="font-size:10px"
+              [class.badge-pendiente]="!s.listo" [class.badge-listo]="s.listo">
+          {{ s.listo ? '✅' : '⬜' }} Mesa {{ s.mesa }} (x{{ s.qty }}) — #{{ s.comandaId }}
         </span>
       </div>
     </div>

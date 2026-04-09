@@ -24,8 +24,11 @@ export class HistorialCocinaPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loading = true;
-    this.api.get<Comanda[]>('/comandas?destino=cocina&status=entregado').subscribe({
-      next: d => { this.comandas = d; this.loading = false; },
+    this.api.get<Comanda[]>('/comandas?destino=cocina').subscribe({
+      next: d => {
+        this.comandas = d.filter(c => c.status === 'listo' || c.status === 'entregado');
+        this.loading = false;
+      },
       error: () => { this.loading = false; },
     });
 

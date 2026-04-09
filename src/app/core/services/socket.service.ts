@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
@@ -9,7 +9,7 @@ export class SocketService {
   private socket: Socket | null = null;
   private subjects = new Map<string, Subject<any>>();
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private zone: NgZone) {}
 
   connect() {
     if (this.socket?.connected) return;
@@ -28,7 +28,8 @@ export class SocketService {
       if (user) this.socket!.emit('join-room', { role: user.role, userId: user.id });
     });
 
-    // Wire up all known events to their subjects
+    // Wire up all known events to their subjects — run inside NgZone
+    // so Angular change detection picks up the updates
     const events = [
       'nueva-comanda-cocina', 'nueva-comanda-barra',
       'comanda-actualizada', 'pedido-listo', 'mesa-actualizada',
@@ -36,7 +37,7 @@ export class SocketService {
     ];
     for (const event of events) {
       this.socket.on(event, (data: any) => {
-        this.getSubject(event).next(data);
+        this.zone.run(() => this.getSubject(event).next(data));
       });
     }
   }

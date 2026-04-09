@@ -153,9 +153,10 @@ export class NuevaComandaPage implements OnInit {
         await t.present();
         this.router.navigateByUrl('/mesero/mesas');
       },
-      error: async () => {
+      error: async (err: any) => {
         this.loading = false;
-        const t = await this.toast.create({ message: 'Error al enviar comanda', duration: 3000, color: 'danger', position: 'top' });
+        const msg = err?.error?.error || 'Error al enviar comanda';
+        const t = await this.toast.create({ message: msg, duration: 4000, color: 'danger', position: 'top' });
         await t.present();
       },
     });

@@ -38,7 +38,9 @@
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="fc-muted" style="font-size:11px">{{ c.nota?.mesero?.name }} &middot; {{ c.createdAt | date:'HH:mm' }}</span>
-        <span class="badge badge-entregado">Entregado</span>
+        <span class="badge" [class.badge-listo]="c.status === 'listo'" [class.badge-entregado]="c.status === 'entregado'">
+          {{ c.status === 'listo' ? 'Listo' : 'Entregado' }}
+        </span>
       </div>
     </div>
     <p *ngIf="!loading && comandas.length === 0 && recentListo.length === 0" style="text-align:center;padding:60px 20px;color:var(--fc-muted)">
