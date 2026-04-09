@@ -36,6 +36,8 @@ yarn-error.log
 
 # backend
 /backend/node_modules
+/backend/.env
+.env
 
 # IDEs and editors
 .idea/
