@@ -33,8 +33,8 @@ interface GroupedItem {
 export class BarraPage implements OnInit, OnDestroy {
   comandas: Comanda[] = [];
   loading = false;
-  showGrouped = false;
   groupedItems: GroupedItem[] = [];
+  preparando = new Set<number>();
   private subs: Subscription[] = [];
 
   constructor(
@@ -95,27 +95,39 @@ export class BarraPage implements OnInit, OnDestroy {
   }
 
   preparar(c: Comanda) {
+    this.preparando.add(c.id);
     this.svc.updateStatus(c.id, 'en_preparacion').subscribe({
-      next: (u: Comanda) => { this.comandas = this.comandas.map(x => (x.id === u.id ? u : x)); this.sort(); this.buildGrouped(); },
+      next: (u: Comanda) => {
+        this.comandas = this.comandas.map(x => (x.id === u.id ? u : x));
+        this.sort();
+        this.buildGrouped();
+        this.preparando.delete(c.id);
+      },
+      error: () => { this.preparando.delete(c.id); },
     });
   }
 
   marcarListo(c: Comanda) {
+    this.preparando.add(c.id);
     this.svc.updateStatus(c.id, 'listo').subscribe({
       next: async () => {
         this.comandas = this.comandas.filter(x => x.id !== c.id);
         this.buildGrouped();
+        this.preparando.delete(c.id);
         const t = await this.toast.create({ message: 'Bebida lista — mesero notificado. Movida a historial.', duration: 2000, color: 'success', position: 'top' });
         await t.present();
       },
+      error: () => { this.preparando.delete(c.id); },
     });
   }
+
+  isPreparando(id: number): boolean { return this.preparando.has(id); }
 
   buildGrouped() {
     const map = new Map<string, GroupedItem>();
     const active = this.comandas.filter(c => c.status !== 'listo' && c.status !== 'entregado');
     for (const c of active) {
-      const mesa = c.nota?.mesa?.identifier || '—';
+      const mesa = c.nota?.mesa?.identifier || 'P/L';
       for (const it of c.items) {
         const name = this.itemName(it);
         if (!map.has(name)) {
@@ -127,7 +139,10 @@ export class BarraPage implements OnInit, OnDestroy {
         g.sources.push({ comandaId: c.id, itemId: it.id, mesa, qty: it.qty, listo: !!it.listo });
       }
     }
-    this.groupedItems = Array.from(map.values()).sort((a, b) => b.totalQty - a.totalQty);
+    // Only show items that are repeated (totalQty > 1 or appear in multiple comandas)
+    this.groupedItems = Array.from(map.values())
+      .filter(g => g.totalQty > 1 || g.sources.length > 1)
+      .sort((a, b) => b.totalQty - a.totalQty);
   }
 
   toggleGroupedListo(g: GroupedItem) {

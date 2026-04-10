@@ -22,3 +22,11 @@
 .irow:hover { background: var(--fc-surface-alt); border-radius: 6px; }
 .btn-soft { padding: 6px 14px; border: 1px solid var(--fc-border); border-radius: 8px; background: var(--fc-surface); color: var(--fc-text); cursor: pointer; font-size: 12px; font-weight: 600; }
 .btn-soft.btn-info { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+.ronda-section { margin-bottom: 20px; }
+.ronda-header, .individual-header { display: flex; align-items: center; gap: 8px; margin: 12px 0 10px; ion-icon { font-size: 18px; color: var(--fc-accent); } h2 { margin: 0; } }
+.ronda-card { margin-bottom: 8px; }
+.ronda-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; gap: 10px; flex-wrap: wrap; }
+.ronda-qty { font-weight: 700; font-size: 18px; color: var(--fc-accent); margin-right: 8px; }
+.ronda-name { font-weight: 500; }
+.ronda-sources { padding: 0 14px 10px; display: flex; flex-wrap: wrap; gap: 6px; .badge { font-size: 10px; } }
+.abtn[disabled] { opacity: 0.7; cursor: not-allowed; }

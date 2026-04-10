@@ -18,35 +18,32 @@
     </div>
   </div>
 
-  <!-- View toggle -->
-  <div style="display:flex;gap:8px;margin-bottom:12px">
-    <button class="btn-soft" [class.btn-info]="!showGrouped" (click)="showGrouped = false">Por comanda</button>
-    <button class="btn-soft" [class.btn-info]="showGrouped" (click)="showGrouped = true">Agrupado (ronda)</button>
-  </div>
-
   <div *ngIf="loading" style="text-align:center;padding:60px">
     <ion-spinner name="crescent" color="warning"></ion-spinner>
   </div>
 
-  <!-- GROUPED VIEW -->
-  <div *ngIf="!loading && showGrouped">
-    <div *ngIf="groupedItems.length === 0" class="empty">Sin bebidas pendientes</div>
-    <div class="fc-card" style="margin-bottom:8px" *ngFor="let g of groupedItems"
+  <!-- GROUPED RONDA (only items repeated across multiple comandas / qty > 1) -->
+  <div class="ronda-section" *ngIf="!loading && groupedItems.length > 0">
+    <div class="ronda-header">
+      <ion-icon name="layers-outline"></ion-icon>
+      <h2 class="fc-h3">Bebidas repetidas — ronda</h2>
+    </div>
+    <div class="fc-card ronda-card" *ngFor="let g of groupedItems"
          [class.dim]="g.allListo"
          [style.border-left]="g.allListo ? '4px solid var(--fc-green)' : '4px solid var(--fc-yellow)'">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px">
+      <div class="ronda-row">
         <div [style.text-decoration]="g.allListo ? 'line-through' : 'none'">
-          <span style="font-weight:700;font-size:18px;color:var(--fc-accent);margin-right:8px">x{{ g.totalQty }}</span>
-          <span style="font-weight:500">{{ g.name }}</span>
+          <span class="ronda-qty">x{{ g.totalQty }}</span>
+          <span class="ronda-name">{{ g.name }}</span>
         </div>
         <button class="abtn" [class.gbtn]="!g.allListo" [class.bbtn]="g.allListo"
                 style="width:auto;padding:8px 16px;font-size:12px"
                 (click)="toggleGroupedListo(g)">
-          {{ g.allListo ? 'Desmarcar' : 'Listo' }}
+          {{ g.allListo ? 'Desmarcar' : 'Lista' }}
         </button>
       </div>
-      <div style="padding:0 14px 10px;display:flex;flex-wrap:wrap;gap:6px">
-        <span *ngFor="let s of g.sources" class="badge" style="font-size:10px"
+      <div class="ronda-sources">
+        <span *ngFor="let s of g.sources" class="badge"
               [class.badge-pendiente]="!s.listo" [class.badge-listo]="s.listo">
           {{ s.listo ? '✅' : '⬜' }} Mesa {{ s.mesa }} (x{{ s.qty }}) — #{{ s.comandaId }}
         </span>
@@ -55,7 +52,11 @@
   </div>
 
   <!-- NORMAL VIEW -->
-  <div class="grid" *ngIf="!loading && !showGrouped">
+  <div class="individual-header" *ngIf="!loading && comandas.length > 0">
+    <ion-icon name="list-outline"></ion-icon>
+    <h2 class="fc-h3">Comandas individuales</h2>
+  </div>
+  <div class="grid" *ngIf="!loading">
     <div
       *ngFor="let c of comandas"
       class="fc-card cmd"
@@ -97,8 +98,14 @@
       </div>
 
       <div *ngIf="c.status !== 'listo' && c.status !== 'entregado'" style="margin-top:8px">
-        <button *ngIf="c.status === 'pendiente'" class="abtn bbtn" (click)="preparar(c)">Preparar</button>
-        <button *ngIf="c.status === 'en_preparacion'" class="abtn gbtn" (click)="marcarListo(c)">&#10003; Lista</button>
+        <button *ngIf="c.status === 'pendiente'" class="abtn bbtn" (click)="preparar(c)" [disabled]="isPreparando(c.id)">
+          <ion-spinner *ngIf="isPreparando(c.id)" name="dots" style="height:14px;vertical-align:middle;margin-right:6px"></ion-spinner>
+          {{ isPreparando(c.id) ? 'Preparando...' : 'Preparar' }}
+        </button>
+        <button *ngIf="c.status === 'en_preparacion'" class="abtn gbtn" (click)="marcarListo(c)" [disabled]="isPreparando(c.id)">
+          <ion-spinner *ngIf="isPreparando(c.id)" name="dots" style="height:14px;vertical-align:middle;margin-right:6px"></ion-spinner>
+          {{ isPreparando(c.id) ? 'Marcando...' : '✓ Lista' }}
+        </button>
       </div>
     </div>
 
