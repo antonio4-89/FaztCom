@@ -56,8 +56,12 @@
             <span class="item-qty">x{{ item.qty }}</span>
             <span class="item-name">{{ getItemName(item) }}</span>
             <span class="item-price" *ngIf="item.price > 0">${{ item.price * item.qty }}</span>
-            <button class="remove-btn" (click)="removeItem(comanda, item)" *ngIf="comanda.status === 'pendiente'">
-              <ion-icon name="close-outline"></ion-icon>
+            <button
+              class="cancel-btn"
+              (click)="removeItem(comanda, item)"
+              *ngIf="comanda.status === 'pendiente' || comanda.status === 'en_preparacion'">
+              <ion-icon name="trash-outline"></ion-icon>
+              Cancelar
             </button>
           </div>
         </div>

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 import { NotasService } from '../../../core/services/notas.service';
 import { ComandasService } from '../../../core/services/comandas.service';
+import { SocketService } from '../../../core/services/socket.service';
 import { Nota, Comanda, ComandaItem } from '../../../core/models/comanda.model';
 
 @Component({
@@ -10,19 +12,32 @@ import { Nota, Comanda, ComandaItem } from '../../../core/models/comanda.model';
   styleUrls: ['mis-pedidos.page.scss'],
   standalone: false
 })
-export class MisPedidosPage implements OnInit {
+export class MisPedidosPage implements OnInit, OnDestroy {
   notas: Nota[] = [];
   loading = false;
+  private subs: Subscription[] = [];
 
   constructor(
     private notasService: NotasService,
     private comandasService: ComandasService,
+    private socket: SocketService,
     private toast: ToastController,
     private alert: AlertController
   ) {}
 
   ngOnInit() {
     this.loadNotas();
+    this.socket.connect();
+    this.subs.push(
+      this.socket.onComandaActualizada().subscribe(() => this.loadNotas()),
+      this.socket.onNuevaComandaCocina().subscribe(() => this.loadNotas()),
+      this.socket.onNuevaComandaBarra().subscribe(() => this.loadNotas()),
+      this.socket.onPedidoListo().subscribe(() => this.loadNotas()),
+    );
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   loadNotas() {
@@ -71,17 +86,21 @@ export class MisPedidosPage implements OnInit {
 
   async removeItem(comanda: Comanda, item: ComandaItem) {
     const a = await this.alert.create({
-      header: 'Eliminar item',
-      message: `Eliminar "${this.getItemName(item)}"?`,
+      header: 'Cancelar producto',
+      message: `¿Cancelar "${this.getItemName(item)}"? Se notificará a cocina/barra.`,
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Volver', role: 'cancel' },
         {
-          text: 'Eliminar',
+          text: 'Cancelar producto',
           handler: () => {
             this.comandasService.removeItem(comanda.id, item.id).subscribe({
-              next: () => this.loadNotas(),
+              next: async () => {
+                const t = await this.toast.create({ message: 'Producto cancelado', duration: 2000, color: 'success', position: 'top' });
+                await t.present();
+                this.loadNotas();
+              },
               error: async () => {
-                const t = await this.toast.create({ message: 'Error al eliminar', duration: 2000, color: 'danger', position: 'top' });
+                const t = await this.toast.create({ message: 'Error al cancelar', duration: 2000, color: 'danger', position: 'top' });
                 await t.present();
               },
             });

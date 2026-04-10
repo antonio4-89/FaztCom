@@ -323,6 +323,31 @@ export async function removeItem(req: Request, res: Response): Promise<void> {
 
     await prisma.comandaItem.delete({ where: { id: itemId } });
 
+    // Check if comanda still has items; if not, mark as entregado (effectively cancelled)
+    const remaining = await prisma.comandaItem.count({ where: { comandaId } });
+
+    if (remaining === 0) {
+      await prisma.comanda.update({
+        where: { id: comandaId },
+        data: { status: 'entregado' },
+      });
+    }
+
+    // Broadcast updated comanda so cocina/barra refresh in real time
+    const updated = await prisma.comanda.findUnique({
+      where: { id: comandaId },
+      include: {
+        items: { include: { producto: true } },
+        nota: {
+          include: {
+            mesa: { select: { id: true, identifier: true, seccion: true } },
+            mesero: { select: { id: true, name: true } },
+          },
+        },
+      },
+    });
+    if (updated) emitComandaActualizada(updated);
+
     res.json({ message: 'Item eliminado correctamente' });
   } catch (error) {
     console.error('[removeItem]', error);
