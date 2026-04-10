@@ -32,6 +32,7 @@ const routes: Routes = [
   { path: 'admin/menu', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/menu/menu-admin.module').then(m => m.MenuAdminPageModule) },
   { path: 'admin/usuarios', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/usuarios/usuarios.module').then(m => m.UsuariosPageModule) },
   { path: 'admin/comandas', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/comandas/comandas-admin.module').then(m => m.ComandasAdminPageModule) },
+  { path: 'admin/vistas', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/vistas/vistas.module').then(m => m.VistasPageModule) },
 ];
 
 @NgModule({

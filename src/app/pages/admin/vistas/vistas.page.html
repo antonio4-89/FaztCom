@@ -1,0 +1,72 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Vistas por rol</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="page-header anim-up">
+    <h1 class="fc-h1">Vistas Operativas</h1>
+    <p class="fc-muted">Acceso rápido a las funciones de cada rol</p>
+  </div>
+
+  <ion-accordion-group multiple="true" [value]="['mesero','cocina','barra']" class="anim-up">
+    <!-- MESERO -->
+    <ion-accordion value="mesero" class="role-accordion mesero">
+      <ion-item slot="header" class="role-header">
+        <ion-icon name="people-outline" slot="start" color="warning"></ion-icon>
+        <ion-label>
+          <h2 class="fc-h3">Mesero</h2>
+          <p class="fc-muted">Gestión de mesas, comandas y notificaciones</p>
+        </ion-label>
+      </ion-item>
+      <div class="role-body" slot="content">
+        <div class="actions-grid">
+          <button *ngFor="let it of meseroItems" class="action-btn" (click)="go(it.route)">
+            <ion-icon [name]="it.icon"></ion-icon>
+            <span>{{ it.label }}</span>
+          </button>
+        </div>
+      </div>
+    </ion-accordion>
+
+    <!-- COCINA -->
+    <ion-accordion value="cocina" class="role-accordion cocina">
+      <ion-item slot="header" class="role-header">
+        <ion-icon name="flame-outline" slot="start" color="danger"></ion-icon>
+        <ion-label>
+          <h2 class="fc-h3">Cocina</h2>
+          <p class="fc-muted">Comandas de comida, menú y historial</p>
+        </ion-label>
+      </ion-item>
+      <div class="role-body" slot="content">
+        <div class="actions-grid">
+          <button *ngFor="let it of cocinaItems" class="action-btn" (click)="go(it.route)">
+            <ion-icon [name]="it.icon"></ion-icon>
+            <span>{{ it.label }}</span>
+          </button>
+        </div>
+      </div>
+    </ion-accordion>
+
+    <!-- BARRA -->
+    <ion-accordion value="barra" class="role-accordion barra">
+      <ion-item slot="header" class="role-header">
+        <ion-icon name="wine-outline" slot="start" color="tertiary"></ion-icon>
+        <ion-label>
+          <h2 class="fc-h3">Barra</h2>
+          <p class="fc-muted">Comandas de bebidas, menú y historial</p>
+        </ion-label>
+      </ion-item>
+      <div class="role-body" slot="content">
+        <div class="actions-grid">
+          <button *ngFor="let it of barraItems" class="action-btn" (click)="go(it.route)">
+            <ion-icon [name]="it.icon"></ion-icon>
+            <span>{{ it.label }}</span>
+          </button>
+        </div>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+</ion-content>

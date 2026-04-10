@@ -1,0 +1,69 @@
+.page-header {
+  margin-bottom: 20px;
+  p { margin-top: 4px; }
+}
+
+ion-accordion-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.role-accordion {
+  background: var(--fc-card);
+  border: 1px solid var(--fc-border);
+  border-radius: 14px;
+  overflow: hidden;
+
+  &.mesero { border-left: 4px solid var(--fc-yellow); }
+  &.cocina { border-left: 4px solid var(--fc-red); }
+  &.barra  { border-left: 4px solid var(--fc-purple); }
+}
+
+.role-header {
+  --background: transparent;
+  --inner-padding-end: 12px;
+  --padding-start: 14px;
+  ion-icon[slot='start'] { font-size: 22px; margin-right: 10px; }
+  h2 { margin: 0; }
+  p { margin-top: 2px; font-size: 12px; }
+}
+
+.role-body {
+  padding: 14px 18px 18px;
+  background: var(--fc-surface);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 10px;
+  background: var(--fc-card);
+  border: 1px solid var(--fc-border);
+  border-radius: 12px;
+  color: var(--fc-text);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+
+  ion-icon {
+    font-size: 24px;
+    color: var(--fc-accent);
+  }
+
+  &:hover {
+    border-color: var(--fc-accent);
+    transform: translateY(-1px);
+  }
+}

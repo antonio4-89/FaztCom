@@ -36,9 +36,7 @@ export class AppComponent implements OnInit {
         { label: 'Menu', route: '/admin/menu', icon: 'restaurant-outline' },
         { label: 'Usuarios', route: '/admin/usuarios', icon: 'people-outline' },
         { label: 'Todas las Comandas', route: '/admin/comandas', icon: 'list-outline' },
-        { label: 'Vista Mesero', route: '/mesero/mesas', icon: 'eye-outline' },
-        { label: 'Vista Cocina', route: '/cocina/comandas', icon: 'flame-outline' },
-        { label: 'Vista Barra', route: '/barra/bebidas', icon: 'wine-outline' },
+        { label: 'Vistas Operativas', route: '/admin/vistas', icon: 'layers-outline' },
       ],
       mesero: [
         { label: 'Mesas', route: '/mesero/mesas', icon: 'grid-outline' },
