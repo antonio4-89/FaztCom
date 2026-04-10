@@ -27,7 +27,7 @@ export class MesasPage implements OnInit, OnDestroy {
     this.loadMesas();
     this.socketService.connect();
     this.socketSub = this.socketService.onMesaActualizada().subscribe(() => {
-      this.loadMesas();
+      this.loadMesas(true);
     });
   }
 
@@ -35,8 +35,8 @@ export class MesasPage implements OnInit, OnDestroy {
     this.socketSub?.unsubscribe();
   }
 
-  loadMesas() {
-    this.loading = true;
+  loadMesas(silent: boolean = false) {
+    if (!silent) this.loading = true;
     this.mesasService.getMesas().subscribe({
       next: (mesas) => {
         this.mesasPM = mesas.filter(m => m.seccion === 'PM');

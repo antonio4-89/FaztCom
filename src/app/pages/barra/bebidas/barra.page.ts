@@ -46,34 +46,19 @@ export class BarraPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.socket.connect();
     this.load();
+    // Recarga completa en cada evento — mismo patron que admin Comandas Activas
     this.subs.push(
-      this.socket.onNuevaComandaBarra().subscribe((c: Comanda) => {
-        if (!this.comandas.find(x => x.id === c.id)) {
-          this.comandas = [c, ...this.comandas];
-        }
-        this.sort();
-        this.buildGrouped();
-      }),
+      this.socket.onNuevaComandaBarra().subscribe(() => this.load(true)),
       this.socket.onComandaActualizada().subscribe((u: Comanda) => {
-        if (u.destino === 'barra') {
-          if (u.status === 'listo' || u.status === 'entregado') {
-            this.comandas = this.comandas.filter(c => c.id !== u.id);
-          } else {
-            const idx = this.comandas.findIndex(c => c.id === u.id);
-            if (idx >= 0) this.comandas[idx] = u;
-            else this.comandas.push(u);
-          }
-          this.sort();
-          this.buildGrouped();
-        }
+        if (u.destino === 'barra') this.load(true);
       }),
     );
   }
 
   ngOnDestroy() { this.subs.forEach(s => s.unsubscribe()); }
 
-  load() {
-    this.loading = true;
+  load(silent: boolean = false) {
+    if (!silent) this.loading = true;
     this.svc.getComandasBarra().subscribe({
       next: d => {
         this.comandas = d.filter(c => c.status !== 'listo' && c.status !== 'entregado');
@@ -139,9 +124,12 @@ export class BarraPage implements OnInit, OnDestroy {
         g.sources.push({ comandaId: c.id, itemId: it.id, mesa, qty: it.qty, listo: !!it.listo });
       }
     }
-    // Only show items that are repeated (totalQty > 1 or appear in multiple comandas)
+    // Only show items that are repeated across different mesas/comandas
     this.groupedItems = Array.from(map.values())
-      .filter(g => g.totalQty > 1 || g.sources.length > 1)
+      .filter(g => {
+        const uniqueMesas = new Set(g.sources.map(s => s.mesa));
+        return g.sources.length > 1 && uniqueMesas.size > 1;
+      })
       .sort((a, b) => b.totalQty - a.totalQty);
   }
 

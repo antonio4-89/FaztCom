@@ -28,15 +28,33 @@ ion-list { background: transparent; }
 .fc-card {
   background: var(--fc-card);
   border-radius: 14px;
-  padding: 18px 20px;
+  padding: 16px 18px;
   border: 1px solid var(--fc-border);
   margin-bottom: 8px;
 }
 
 /* Typography */
-.fc-h1 { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 700; margin: 0; color: var(--fc-text); }
-.fc-h2 { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 600; margin: 0; color: var(--fc-text); }
-.fc-h3 { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; margin: 0; color: var(--fc-text); }
+.fc-h1 { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 700; margin: 0; color: var(--fc-text); }
+.fc-h2 { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 600; margin: 0; color: var(--fc-text); }
+.fc-h3 { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; margin: 0; color: var(--fc-text); }
+
+/* Responsive breakpoints — tablet 1340x800 and mobile */
+@media (max-width: 1400px) {
+  .fc-h1 { font-size: 22px; }
+  .fc-h2 { font-size: 16px; }
+  .fc-card { padding: 14px 16px; }
+}
+@media (max-width: 768px) {
+  .fc-h1 { font-size: 20px; }
+  .fc-h2 { font-size: 15px; }
+  .fc-h3 { font-size: 13px; }
+  .fc-card { padding: 12px 14px; border-radius: 12px; }
+  .fc-muted { font-size: 12px; }
+}
+@media (max-width: 480px) {
+  .fc-h1 { font-size: 18px; }
+  .fc-card { padding: 10px 12px; border-radius: 10px; }
+}
 .fc-num { font-family: 'Outfit', sans-serif; font-weight: 800; }
 .fc-muted { color: var(--fc-muted); font-size: 13px; }
 .fc-dim { color: var(--fc-dim); font-size: 12px; }

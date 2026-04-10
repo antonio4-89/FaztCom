@@ -309,6 +309,7 @@ export async function removeItem(req: Request, res: Response): Promise<void> {
 
     const item = await prisma.comandaItem.findUnique({
       where: { id: itemId },
+      include: { comanda: true },
     });
 
     if (!item) {
@@ -318,6 +319,12 @@ export async function removeItem(req: Request, res: Response): Promise<void> {
 
     if (item.comandaId !== comandaId) {
       res.status(400).json({ error: 'El item no pertenece a esta comanda' });
+      return;
+    }
+
+    // Solo se puede cancelar si la comanda aun no se ha preparado
+    if (item.comanda.status !== 'pendiente') {
+      res.status(400).json({ error: 'No se puede cancelar un producto que ya esta en preparacion' });
       return;
     }
 

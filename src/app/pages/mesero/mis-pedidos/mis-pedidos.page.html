@@ -59,7 +59,7 @@
             <button
               class="cancel-btn"
               (click)="removeItem(comanda, item)"
-              *ngIf="comanda.status === 'pendiente' || comanda.status === 'en_preparacion'">
+              *ngIf="comanda.status === 'pendiente'">
               <ion-icon name="trash-outline"></ion-icon>
               Cancelar
             </button>
