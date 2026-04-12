@@ -58,13 +58,18 @@ export class ReportesPage implements OnInit {
   loadSemana() {
     this.loadingSemana = true;
     const now = new Date();
-    const day = now.getDay();
+    const day = now.getDay(); // 0=Dom…6=Sáb
     const monday = new Date(now);
     monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
     monday.setHours(0, 0, 0, 0);
 
+    // Siempre mostrar la semana completa Lun-Dom;
+    // los días futuros aparecen con $0 (el backend llena el rango aunque no haya ventas).
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
     this.semanaDesde = this.toISO(monday);
-    this.semanaHasta = this.toISO(now);
+    this.semanaHasta = this.toISO(sunday);
 
     this.svc.getVentasDiarias(this.semanaDesde, this.semanaHasta).subscribe({
       next: r => {

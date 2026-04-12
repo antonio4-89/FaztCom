@@ -155,9 +155,13 @@ export async function getVentasDiarias(req: Request, res: Response): Promise<voi
       return;
     }
 
-    const desdeDate = new Date(desde as string);
-    const hastaDate = new Date(hasta as string);
-    hastaDate.setHours(23, 59, 59, 999);
+    // Parsear como medianoche LOCAL para evitar desfase de zona horaria
+    // new Date("YYYY-MM-DD") se interpreta en UTC, lo que causa que el cursor
+    // empiece un día antes en zonas como UTC-5/UTC-6.
+    const [dy, dm, dd] = (desde as string).split('-').map(Number);
+    const [hy, hm, hd] = (hasta as string).split('-').map(Number);
+    const desdeDate = new Date(dy, dm - 1, dd, 0, 0, 0, 0);
+    const hastaDate = new Date(hy, hm - 1, hd, 23, 59, 59, 999);
 
     const notas = await prisma.nota.findMany({
       where: { status: 'cerrada', closedAt: { gte: desdeDate, lte: hastaDate } },

@@ -36,7 +36,6 @@ yarn-error.log
 
 
 # backend
-/backend
 /backend/node_modules
 /backend/.env
 .env

@@ -122,8 +122,8 @@
   color: var(--fc-muted);
 }
 
-// Summary
-.sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+// Summary — 6 tarjetas (igual que el Dashboard)
+.sum-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
 .sum-card { text-align: center; }
 .sum-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
 .sum-value { font-size: 26px; font-weight: 800; margin-top: 6px; }
@@ -140,6 +140,9 @@
   gap: 8px;
 }
 
+@media (max-width: 1200px) {
+  .sum-grid { grid-template-columns: repeat(3, 1fr); }
+}
 @media (max-width: 768px) {
   .sum-grid { grid-template-columns: repeat(2, 1fr); }
   .months-grid { grid-template-columns: repeat(2, 1fr); }

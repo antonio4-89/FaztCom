@@ -85,7 +85,7 @@
     </div>
 
     <div *ngIf="!loading && summary">
-      <!-- Summary Cards -->
+      <!-- Summary Cards — mismos KPIs que el Dashboard -->
       <div class="sum-grid">
         <div class="fc-card sum-card">
           <div class="fc-muted sum-label">Terraza</div>
@@ -100,8 +100,16 @@
           <div class="sum-value fc-num" style="color:var(--fc-blue)">${{ summary.ventasPL.toLocaleString() }}</div>
         </div>
         <div class="fc-card sum-card">
+          <div class="fc-muted sum-label">Total Ventas</div>
+          <div class="sum-value fc-num" style="color:var(--fc-green)">${{ summary.total.toLocaleString() }}</div>
+        </div>
+        <div class="fc-card sum-card">
+          <div class="fc-muted sum-label">Gastos</div>
+          <div class="sum-value fc-num" style="color:var(--fc-red)">${{ summary.gastos.toLocaleString() }}</div>
+        </div>
+        <div class="fc-card sum-card">
           <div class="fc-muted sum-label">En Caja</div>
-          <div class="sum-value fc-num" style="color:var(--fc-green)">${{ summary.enCaja.toLocaleString() }}</div>
+          <div class="sum-value fc-num" style="color:var(--fc-green)" style="font-weight:900">${{ summary.enCaja.toLocaleString() }}</div>
         </div>
       </div>
 
