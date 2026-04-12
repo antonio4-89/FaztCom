@@ -19,7 +19,6 @@
   <div class="legend">
     <span class="legend-item"><span class="dot dot-libre"></span> Disponible</span>
     <span class="legend-item"><span class="dot dot-abierta"></span> Ocupada</span>
-    <span class="legend-item"><span class="dot dot-cerrada"></span> Cerrada</span>
     <span class="legend-item"><span class="dot dot-limpiar"></span> Por limpiar</span>
   </div>
 
@@ -53,9 +52,8 @@
         <button
           class="mesa-card"
           [class.mesa-abierta]="m.status === 'abierta'"
-          [class.mesa-cerrada]="m.status === 'cerrada'"
           [class.mesa-limpiar]="m.status === 'limpiar'"
-          [class.mesa-disabled]="m.status === 'cerrada' || m.status === 'limpiar'"
+          [class.mesa-disabled]="m.status === 'limpiar'"
           (click)="selectMesa(m)">
           <div class="mesa-tipo">{{ m.tipo === 'periquera' ? 'Periquera' : 'Mesa' }}</div>
           <div class="mesa-id">{{ m.identifier }}</div>
@@ -79,9 +77,8 @@
         <button
           class="mesa-card"
           [class.mesa-abierta]="m.status === 'abierta'"
-          [class.mesa-cerrada]="m.status === 'cerrada'"
           [class.mesa-limpiar]="m.status === 'limpiar'"
-          [class.mesa-disabled]="m.status === 'cerrada' || m.status === 'limpiar'"
+          [class.mesa-disabled]="m.status === 'limpiar'"
           (click)="selectMesa(m)">
           <div class="mesa-tipo">{{ m.tipo === 'periquera' ? 'Periquera' : 'Mesa' }}</div>
           <div class="mesa-id">{{ m.identifier }}</div>

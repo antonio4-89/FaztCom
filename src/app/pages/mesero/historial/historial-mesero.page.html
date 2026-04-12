@@ -29,7 +29,6 @@
           <div class="nota-title">
             <span class="fc-h3">Mesa {{ nota.mesa?.identifier }}</span>
             <span class="badge" [ngClass]="getSeccionClass(nota.mesa?.seccion || '')">{{ nota.mesa?.seccion }}</span>
-            <span class="badge badge-cerrada">Cerrada</span>
           </div>
           <div class="nota-meta fc-muted">
             Nota #{{ nota.id }} &bull; Cerrada {{ nota.closedAt | date:'HH:mm' }}

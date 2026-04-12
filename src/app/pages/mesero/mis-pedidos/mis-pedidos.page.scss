@@ -1,3 +1,4 @@
+/* ── Page layout ─────────────────────────────────────────────────────────── */
 .page-header {
   margin-bottom: 20px;
   p { margin-top: 4px; }
@@ -7,13 +8,7 @@
   text-align: center;
   padding: 60px 20px;
   color: var(--fc-dim);
-
-  ion-icon {
-    font-size: 52px;
-    display: block;
-    margin: 0 auto 12px;
-  }
-
+  ion-icon { font-size: 52px; display: block; margin: 0 auto 12px; }
   p { margin-top: 6px; }
 }
 
@@ -23,13 +18,44 @@
   gap: 16px;
 }
 
+/* ── Nota card ───────────────────────────────────────────────────────────── */
 .nota-card {
   padding: 16px 18px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+
+  /* Efecto táctil al presionar la tarjeta (puntos 5) */
+  &:active {
+    transform: scale(0.985);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Resaltar cuando todos los pedidos están listos */
+  &.card-ready {
+    border-color: var(--fc-green) !important;
+  }
 }
 
-.nota-header {
-  margin-bottom: 4px;
+/* ── Tap effect en filas de items y botones ──────────────────────────────── */
+.tap-row {
+  border-radius: 6px;
+  transition: background 0.1s ease, transform 0.1s ease;
+  &:active {
+    background: var(--fc-surface-alt);
+    transform: scale(0.98);
+  }
 }
+
+.tap-btn {
+  transition: transform 0.1s ease, opacity 0.1s ease, box-shadow 0.1s ease;
+  &:active:not(:disabled) {
+    transform: scale(0.93);
+    opacity: 0.85;
+    box-shadow: none;
+  }
+}
+
+/* ── Header / meta ───────────────────────────────────────────────────────── */
+.nota-header { margin-bottom: 4px; }
 
 .nota-title-row {
   display: flex;
@@ -39,13 +65,10 @@
   margin-bottom: 4px;
 }
 
-.nota-meta {
-  font-size: 12px;
-}
+.nota-meta { font-size: 12px; }
 
-.comanda-block {
-  margin-bottom: 10px;
-}
+/* ── Comandas ────────────────────────────────────────────────────────────── */
+.comanda-block { margin-bottom: 10px; }
 
 .comanda-sub-header {
   display: flex;
@@ -64,7 +87,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 0;
+  padding: 4px 4px;
   font-size: 13px;
 }
 
@@ -79,31 +102,8 @@
   flex-shrink: 0;
 }
 
-.item-name {
-  flex: 1;
-  color: var(--fc-text);
-}
-
-.item-price {
-  color: var(--fc-muted);
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-.remove-btn {
-  background: var(--fc-red-soft);
-  border: none;
-  border-radius: 6px;
-  color: var(--fc-red);
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  ion-icon { font-size: 14px; }
-}
+.item-name { flex: 1; color: var(--fc-text); }
+.item-price { color: var(--fc-muted); font-size: 12px; flex-shrink: 0; }
 
 .cancel-btn {
   background: var(--fc-red-soft);
@@ -123,6 +123,7 @@
   &:hover { opacity: 0.85; }
 }
 
+/* ── Footer ──────────────────────────────────────────────────────────────── */
 .nota-footer {
   display: flex;
   align-items: center;
@@ -144,9 +145,108 @@
   color: var(--fc-accent);
 }
 
+/* Aviso de pedidos en proceso */
+.pending-warn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--fc-yellow);
+  font-weight: 600;
+  background: var(--fc-yellow-soft);
+  border-radius: 8px;
+  padding: 5px 10px;
+  ion-icon { font-size: 13px; }
+}
+
+/* Botón cerrar cuenta */
 .close-btn {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
   ion-icon { font-size: 16px; }
 }
+
+.btn-success {
+  background: var(--fc-green);
+  color: #fff;
+  &:hover { opacity: 0.9; }
+}
+
+.btn-soft {
+  background: var(--fc-surface-alt);
+  color: var(--fc-muted);
+}
+
+.btn-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Skeleton shimmer ────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+%shimmer-base {
+  background: linear-gradient(
+    90deg,
+    var(--fc-surface-alt) 25%,
+    var(--fc-border) 50%,
+    var(--fc-surface-alt) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+}
+
+.skeleton-card {
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.skeleton-closing {
+  opacity: 0.7;
+  border-color: var(--fc-yellow) !important;
+}
+
+.sk-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.sk-footer-row {
+  justify-content: space-between;
+}
+
+.sk-box {
+  @extend %shimmer-base;
+  height: 20px;
+}
+
+.sk-line {
+  @extend %shimmer-base;
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+/* Dimensiones específicas */
+.sk-title { width: 120px; height: 22px; border-radius: 8px; }
+.sk-badge { width: 50px; height: 18px; border-radius: 10px; }
+.sk-meta  { width: 140px; }
+.sk-item-l { width: 85%; }
+.sk-item-m { width: 70%; }
+.sk-item-s { width: 55%; }
+.sk-total  { width: 80px; height: 26px; }
+.sk-btn    { width: 120px; height: 34px; border-radius: 10px; }

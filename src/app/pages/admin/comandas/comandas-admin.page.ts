@@ -21,18 +21,20 @@ export class ComandasAdminPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.socket.connect();
     this.load();
     this.subs.push(
-      this.socket.onComandaActualizada().subscribe(() => this.load()),
-      this.socket.onNuevaComandaCocina().subscribe(() => this.load()),
-      this.socket.onNuevaComandaBarra().subscribe(() => this.load()),
+      this.socket.onComandaActualizada().subscribe(() => this.load(true)),
+      this.socket.onNuevaComandaCocina().subscribe(() => this.load(true)),
+      this.socket.onNuevaComandaBarra().subscribe(() => this.load(true)),
+      this.socket.onNotaCerrada().subscribe(() => this.load(true)),
     );
   }
 
   ngOnDestroy() { this.subs.forEach(s => s.unsubscribe()); }
 
-  load() {
-    this.loading = true;
+  load(silent = false) {
+    if (!silent) this.loading = true;
     this.svc.getMisNotas().subscribe({
       next: d => { this.notas = d; this.loading = false; },
       error: () => { this.loading = false; },

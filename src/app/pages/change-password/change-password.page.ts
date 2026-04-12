@@ -39,7 +39,7 @@ export class ChangePasswordPage {
       next: () => {
         this.loading = false;
         this.auth.clearMustChangePassword();
-        this.showToast('¡Contraseña establecida! Bienvenido 🎉');
+        this.showToast('Contrasena establecida. Bienvenido!');
         this.router.navigateByUrl(this.auth.getDefaultRoute());
       },
       error: () => {

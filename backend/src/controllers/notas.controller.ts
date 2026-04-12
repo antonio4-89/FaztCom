@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
-import { emitMesaActualizada } from '../socket';
+import { emitMesaActualizada, emitNotaCerrada } from '../socket';
 
 export async function getMisNotas(req: Request, res: Response): Promise<void> {
   try {
@@ -38,10 +38,14 @@ export async function getHistorial(req: Request, res: Response): Promise<void> {
   try {
     const user = req.user!;
 
+    // Solo mostrar notas cerradas del dia actual
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+
     const where =
       user.role === 'admin'
-        ? { status: 'cerrada' as const }
-        : { meseroId: user.id, status: 'cerrada' as const };
+        ? { status: 'cerrada' as const, closedAt: { gte: startOfDay } }
+        : { meseroId: user.id, status: 'cerrada' as const, closedAt: { gte: startOfDay } };
 
     const notas = await prisma.nota.findMany({
       where,
@@ -132,6 +136,17 @@ export async function closeNota(req: Request, res: Response): Promise<void> {
       return;
     }
 
+    // Verificar que no haya comandas pendientes o en preparacion
+    const comandasActivas = nota.comandas.filter(
+      c => c.status === 'pendiente' || c.status === 'en_preparacion'
+    );
+    if (comandasActivas.length > 0) {
+      res.status(400).json({
+        error: `No se puede cerrar la cuenta. Hay ${comandasActivas.length} comanda(s) que aún no están listas.`,
+      });
+      return;
+    }
+
     // Calculate total from all ComandaItems (price * qty) across all comandas
     let total = 0;
     for (const comanda of nota.comandas) {
@@ -165,6 +180,9 @@ export async function closeNota(req: Request, res: Response): Promise<void> {
       });
       emitMesaActualizada(updatedMesa);
     }
+
+    // Notify admin that this nota was closed so they can refresh
+    emitNotaCerrada(notaId);
 
     res.json(updatedNota);
   } catch (error) {

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getVentas, getHistorialVentas } from '../controllers/ventas.controller';
+import { getVentas, getHistorialVentas, getVentasMensuales, getVentasDiarias } from '../controllers/ventas.controller';
 import { requireRole } from '../middleware/role';
 
 const router = Router();
@@ -12,5 +12,11 @@ router.get('/', getVentas);
 
 // GET /api/ventas/historial — historical sales by date range
 router.get('/historial', getHistorialVentas);
+
+// GET /api/ventas/mensuales — monthly breakdown for a year
+router.get('/mensuales', getVentasMensuales);
+
+// GET /api/ventas/diarias — daily breakdown for a date range
+router.get('/diarias', getVentasDiarias);
 
 export default router;

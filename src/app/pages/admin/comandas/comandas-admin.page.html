@@ -45,7 +45,7 @@
         <ng-container *ngFor="let comanda of nota.comandas">
           <!-- Comanda header row -->
           <div class="comanda-row">
-            <span class="item-tipo">{{ comanda.destino === 'barra' ? '🍸' : '🍽' }}</span>
+            <span class="item-tipo"><ion-icon [name]="comanda.destino === 'barra' ? 'wine-outline' : 'restaurant-outline'" style="font-size:14px;vertical-align:middle"></ion-icon></span>
             <span style="font-size:11px;color:var(--fc-muted);flex:1">{{ comanda.destino | titlecase }}</span>
             <span class="item-status" [ngClass]="statusClass(comanda.status)">{{ statusLabel(comanda.status) }}</span>
           </div>

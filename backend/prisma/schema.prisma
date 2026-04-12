@@ -28,7 +28,6 @@ enum MesaTipo {
 enum MesaStatus {
   libre
   abierta
-  cerrada
   limpiar
 }
 

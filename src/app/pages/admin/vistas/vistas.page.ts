@@ -12,7 +12,7 @@ interface VistaItem { label: string; route: string; icon: string; }
 export class VistasPage {
   meseroItems: VistaItem[] = [
     { label: 'Mesas', route: '/mesero/mesas', icon: 'grid-outline' },
-    { label: 'Nueva Comanda', route: '/mesero/nueva-comanda', icon: 'add-circle-outline' },
+    // { label: 'Nueva Comanda', route: '/mesero/nueva-comanda', icon: 'add-circle-outline' },
     { label: 'Mis Pedidos', route: '/mesero/mis-pedidos', icon: 'receipt-outline' },
     { label: 'Historial', route: '/mesero/historial', icon: 'time-outline' },
     { label: 'Notificaciones', route: '/mesero/notificaciones', icon: 'notifications-outline' },

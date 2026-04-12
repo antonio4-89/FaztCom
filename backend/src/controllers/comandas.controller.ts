@@ -20,11 +20,12 @@ interface CreateComandaItem {
 
 export async function getComandas(req: Request, res: Response): Promise<void> {
   try {
-    const { destino, status } = req.query;
+    const { destino, status, today } = req.query;
 
     const where: {
       destino?: ComandaDestino;
       status?: ComandaStatus;
+      createdAt?: { gte: Date };
     } = {};
 
     if (destino && (destino === 'cocina' || destino === 'barra')) {
@@ -36,6 +37,12 @@ export async function getComandas(req: Request, res: Response): Promise<void> {
       ['pendiente', 'en_preparacion', 'listo', 'entregado'].includes(status as string)
     ) {
       where.status = status as ComandaStatus;
+    }
+
+    // Filtrar solo comandas del dia actual
+    if (today === 'true') {
+      const now = new Date();
+      where.createdAt = { gte: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0) };
     }
 
     const comandas = await prisma.comanda.findMany({
@@ -372,15 +379,21 @@ export async function toggleItemListo(req: Request, res: Response): Promise<void
       return;
     }
 
-    const item = await prisma.comandaItem.findUnique({ where: { id: itemId } });
+    // Include producto so we can read the item name for notifications
+    const item = await prisma.comandaItem.findUnique({
+      where: { id: itemId },
+      include: { producto: true },
+    });
     if (!item || item.comandaId !== comandaId) {
       res.status(404).json({ error: 'Item no encontrado' });
       return;
     }
 
+    const togglingToListo = !item.listo;
+
     const updated = await prisma.comandaItem.update({
       where: { id: itemId },
-      data: { listo: !item.listo },
+      data: { listo: togglingToListo },
     });
 
     // Re-fetch full comanda to broadcast
@@ -397,7 +410,36 @@ export async function toggleItemListo(req: Request, res: Response): Promise<void
       },
     });
 
-    if (comanda) emitComandaActualizada(comanda);
+    if (comanda) {
+      emitComandaActualizada(comanda);
+
+      // Notify mesero when a single item is marked ready in a multi-item comanda
+      if (togglingToListo && comanda.items.length > 1) {
+        const meseroId = comanda.nota.meseroId;
+        const mesaLabel = comanda.nota.mesa
+          ? `Mesa ${comanda.nota.mesa.identifier}`
+          : 'Para Llevar';
+        const itemName =
+          (item as any).producto?.name || item.customName || 'Item';
+
+        // Persist notification so the mesero bell badge updates
+        await prisma.notificacion.create({
+          data: {
+            meseroId,
+            message: `"${itemName}" listo en ${comanda.destino} — ${mesaLabel}`,
+            tipo: comanda.destino,
+          },
+        });
+
+        emitPedidoListoMesero(meseroId, {
+          comandaId,
+          mesa: comanda.nota.mesa?.identifier || 'Para Llevar',
+          destino: comanda.destino,
+          itemName,
+          partial: true,
+        });
+      }
+    }
 
     res.json(updated);
   } catch (error) {

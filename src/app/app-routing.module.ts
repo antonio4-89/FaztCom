@@ -28,6 +28,7 @@ const routes: Routes = [
   // Admin
   { path: 'admin/dashboard', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/dashboard/dashboard.module').then(m => m.DashboardPageModule) },
   { path: 'admin/ventas', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/ventas/ventas.module').then(m => m.VentasPageModule) },
+  { path: 'admin/reportes', canActivate:[AuthGuard, RoleGuard], data: {roles: ['admin']}, loadChildren: () => import('./pages/admin/reportes/reportes.module'). then(m => m.ReportesPageModule) },
   { path: 'admin/gastos', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/gastos/gastos.module').then(m => m.GastosPageModule) },
   { path: 'admin/menu', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/menu/menu-admin.module').then(m => m.MenuAdminPageModule) },
   { path: 'admin/usuarios', canActivate: [AuthGuard, RoleGuard], data: { roles: ['admin'] }, loadChildren: () => import('./pages/admin/usuarios/usuarios.module').then(m => m.UsuariosPageModule) },

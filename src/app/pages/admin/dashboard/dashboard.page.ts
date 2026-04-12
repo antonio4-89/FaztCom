@@ -34,12 +34,12 @@ export class DashboardPage implements OnInit {
   buildStats() {
     const s = this.summary!;
     this.stats = [
-      { label: 'Ventas Terraza',   value: '$' + s.ventasT.toLocaleString(),  color: 'var(--fc-accent)',  bg: 'var(--fc-accent-soft)',  icon: '📈' },
-      { label: 'Ventas PM/Sala',   value: '$' + s.ventasPM.toLocaleString(), color: 'var(--fc-purple)',  bg: 'var(--fc-purple-soft)',  icon: '📊' },
-      { label: 'Ventas Totales',   value: '$' + s.total.toLocaleString(),     color: 'var(--fc-green)',   bg: 'var(--fc-green-soft)',   icon: '💰' },
-      { label: 'Gastos',           value: '$' + s.gastos.toLocaleString(),    color: 'var(--fc-red)',     bg: 'var(--fc-red-soft)',     icon: '📉' },
-      { label: 'En Caja',          value: '$' + s.enCaja.toLocaleString(),    color: 'var(--fc-blue)',    bg: 'var(--fc-blue-soft)',    icon: '🏦' },
-      { label: 'Notas Cerradas',   value: String(s.notasCerradas.length),     color: 'var(--fc-yellow)',  bg: 'var(--fc-yellow-soft)',  icon: '🧾' },
+      { label: 'Ventas Terraza',   value: '$' + s.ventasT.toLocaleString(),  color: 'var(--fc-accent)',  bg: 'var(--fc-accent-soft)',  icon: 'trending-up-outline' },
+      { label: 'Ventas PM/Sala',   value: '$' + s.ventasPM.toLocaleString(), color: 'var(--fc-purple)',  bg: 'var(--fc-purple-soft)',  icon: 'bar-chart-outline' },
+      { label: 'Ventas Totales',   value: '$' + s.total.toLocaleString(),     color: 'var(--fc-green)',   bg: 'var(--fc-green-soft)',   icon: 'cash-outline' },
+      { label: 'Gastos',           value: '$' + s.gastos.toLocaleString(),    color: 'var(--fc-red)',     bg: 'var(--fc-red-soft)',     icon: 'trending-down-outline' },
+      { label: 'En Caja',          value: '$' + s.enCaja.toLocaleString(),    color: 'var(--fc-blue)',    bg: 'var(--fc-blue-soft)',    icon: 'wallet-outline' },
+      { label: 'Notas Cerradas',   value: String(s.notasCerradas.length),     color: 'var(--fc-yellow)',  bg: 'var(--fc-yellow-soft)',  icon: 'receipt-outline' },
     ];
   }
 }

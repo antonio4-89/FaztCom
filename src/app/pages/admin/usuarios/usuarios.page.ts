@@ -37,8 +37,8 @@ export class UsuariosPage implements OnInit {
     });
   }
 
-  roleEmoji(role: Role): string {
-    return { admin: '👑', mesero: '📋', cocinero: '🔥', bartender: '🍸' }[role] ?? '👤';
+  roleIcon(role: Role): string {
+    return { admin: 'shield-outline', mesero: 'clipboard-outline', cocinero: 'flame-outline', bartender: 'wine-outline' }[role] ?? 'person-outline';
   }
 
   roleBadgeClass(role: Role): string { return 'role-' + role; }
@@ -101,7 +101,7 @@ export class UsuariosPage implements OnInit {
           this.formLoading = false;
           this.cancelForm();
           this.load();
-          this.showToast('Usuario registrado — código enviado al correo ✉️');
+          this.showToast('Usuario registrado — codigo enviado al correo');
         },
         error: (e) => {
           this.formLoading = false;

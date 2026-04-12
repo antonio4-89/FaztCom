@@ -1,0 +1,190 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Reportes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h1 class="fc-h1" style="margin-bottom:14px">Reportes</h1>
+
+  <!-- Tab selector -->
+  <div class="tab-row">
+    <button class="tab-btn" [class.active]="activeTab === 'semana'" (click)="setTab('semana')">
+      <ion-icon name="calendar-outline"></ion-icon>
+      Semanal
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'mes'" (click)="setTab('mes')">
+      <ion-icon name="stats-chart-outline"></ion-icon>
+      Mensual
+    </button>
+  </div>
+
+  <!-- ===== REPORTE SEMANAL ===== -->
+  <div *ngIf="activeTab === 'semana'">
+    <div class="report-header">
+      <div>
+        <h2 class="fc-h2">Reporte Semanal</h2>
+        <p class="fc-muted" style="font-size:12px;margin-top:2px">
+          {{ semanaDesde | date:'dd/MM' }} — {{ semanaHasta | date:'dd/MM/yyyy' }}
+        </p>
+      </div>
+      <div class="total-pill">${{ semanaTotal.toLocaleString() }}</div>
+    </div>
+
+    <div *ngIf="loadingSemana" style="text-align:center;padding:60px">
+      <ion-spinner name="crescent" color="warning"></ion-spinner>
+    </div>
+
+    <div *ngIf="!loadingSemana">
+      <!-- Summary cards -->
+      <div class="sum4-grid">
+        <div class="fc-card mini-sum">
+          <div class="fc-muted sum-lbl">Terraza</div>
+          <div class="sum-val" style="color:var(--fc-accent)">${{ semanaTotalT.toLocaleString() }}</div>
+        </div>
+        <div class="fc-card mini-sum">
+          <div class="fc-muted sum-lbl">PM / Sala</div>
+          <div class="sum-val" style="color:var(--fc-purple)">${{ semanaTotalPM.toLocaleString() }}</div>
+        </div>
+        <div class="fc-card mini-sum">
+          <div class="fc-muted sum-lbl">Para Llevar</div>
+          <div class="sum-val" style="color:var(--fc-blue)">${{ semanaTotalPL.toLocaleString() }}</div>
+        </div>
+        <div class="fc-card mini-sum">
+          <div class="fc-muted sum-lbl">Notas</div>
+          <div class="sum-val" style="color:var(--fc-yellow)">{{ semanaTotalNotas }}</div>
+        </div>
+      </div>
+
+      <!-- Bar chart -->
+      <div class="fc-card chart-card">
+        <h3 class="fc-h3" style="margin-bottom:14px">Ventas por dia</h3>
+        <div class="chart-rows">
+          <div *ngFor="let row of semanaRows" class="chart-row">
+            <div class="day-label">
+              <span class="day-name">{{ row.dayName }}</span>
+              <span class="day-date fc-dim">{{ row.dayLabel }}</span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar" [style.width.%]="barWidth(row.total, semanaRows)"
+                   [class.bar-zero]="row.total === 0"></div>
+            </div>
+            <div class="day-total" [style.color]="row.total > 0 ? 'var(--fc-accent)' : 'var(--fc-dim)'">
+              ${{ row.total.toLocaleString() }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail table -->
+      <div class="fc-card" style="margin-top:12px">
+        <h3 class="fc-h3" style="margin-bottom:10px">Detalle por dia</h3>
+        <div class="detail-table">
+          <div class="detail-header">
+            <span>Dia</span><span>Terraza</span><span>PM</span><span>P/Ll.</span><span>Total</span>
+          </div>
+          <div *ngFor="let row of semanaRows" class="detail-row" [class.row-zero]="row.total === 0">
+            <span><strong>{{ row.dayName }}</strong> <span class="fc-dim">{{ row.dayLabel }}</span></span>
+            <span>${{ row.ventasT.toLocaleString() }}</span>
+            <span>${{ row.ventasPM.toLocaleString() }}</span>
+            <span>${{ row.ventasPL.toLocaleString() }}</span>
+            <span class="detail-total">${{ row.total.toLocaleString() }}</span>
+          </div>
+          <div class="detail-footer">
+            <span>Total</span><span></span><span></span><span></span>
+            <span>${{ semanaTotal.toLocaleString() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REPORTE MENSUAL ===== -->
+  <div *ngIf="activeTab === 'mes'">
+    <!-- Month navigator -->
+    <div class="month-nav">
+      <button class="nav-btn" (click)="prevMonth()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+      <h2 class="fc-h2">{{ mesActual }}</h2>
+      <button class="nav-btn" (click)="nextMonth()" [disabled]="isCurrentMonth" [class.nav-disabled]="isCurrentMonth">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+    <div *ngIf="loadingMes" style="text-align:center;padding:60px">
+      <ion-spinner name="crescent" color="warning"></ion-spinner>
+    </div>
+
+    <div *ngIf="!loadingMes">
+      <!-- Total + breakdown -->
+      <div class="report-header" style="margin-bottom:12px">
+        <div>
+          <div class="fc-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.5px">Total del mes</div>
+          <div style="font-size:28px;font-weight:800;color:var(--fc-green)">${{ mesTotal.toLocaleString() }}</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div class="mini-stat">
+            <div class="fc-dim" style="font-size:10px">Terraza</div>
+            <div style="font-weight:700;color:var(--fc-accent);font-size:13px">${{ mesTotalT.toLocaleString() }}</div>
+          </div>
+          <div class="mini-stat">
+            <div class="fc-dim" style="font-size:10px">PM/Sala</div>
+            <div style="font-weight:700;color:var(--fc-purple);font-size:13px">${{ mesTotalPM.toLocaleString() }}</div>
+          </div>
+          <div class="mini-stat">
+            <div class="fc-dim" style="font-size:10px">P/Llevar</div>
+            <div style="font-weight:700;color:var(--fc-blue);font-size:13px">${{ mesTotalPL.toLocaleString() }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar chart -->
+      <div class="fc-card chart-card">
+        <h3 class="fc-h3" style="margin-bottom:14px">Ventas diarias — {{ mesActual }}</h3>
+        <div class="chart-rows">
+          <div *ngFor="let row of mesRows" class="chart-row chart-row-sm">
+            <div class="day-label">
+              <span class="day-name">{{ row.dayName }}</span>
+              <span class="day-date fc-dim">{{ row.dayLabel }}</span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar" [style.width.%]="barWidth(row.total, mesRows)"
+                   [class.bar-zero]="row.total === 0"></div>
+            </div>
+            <div class="day-total" [style.color]="row.total > 0 ? 'var(--fc-accent)' : 'var(--fc-dim)'">
+              ${{ row.total.toLocaleString() }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail table (only days with sales) -->
+      <div class="fc-card" style="margin-top:12px">
+        <h3 class="fc-h3" style="margin-bottom:10px">Dias con ventas</h3>
+        <div class="detail-table">
+          <div class="detail-header">
+            <span>Dia</span><span>Terraza</span><span>PM</span><span>P/Ll.</span><span>Total</span>
+          </div>
+          <ng-container *ngFor="let row of mesRows">
+            <div *ngIf="row.total > 0" class="detail-row">
+              <span><strong>{{ row.dayName }}</strong> <span class="fc-dim">{{ row.dayLabel }}</span></span>
+              <span>${{ row.ventasT.toLocaleString() }}</span>
+              <span>${{ row.ventasPM.toLocaleString() }}</span>
+              <span>${{ row.ventasPL.toLocaleString() }}</span>
+              <span class="detail-total">${{ row.total.toLocaleString() }}</span>
+            </div>
+          </ng-container>
+          <p *ngIf="mesTotal === 0" class="fc-muted" style="text-align:center;padding:20px">
+            Sin ventas registradas este mes
+          </p>
+          <div *ngIf="mesTotal > 0" class="detail-footer">
+            <span>Total</span><span></span><span></span><span></span>
+            <span>${{ mesTotal.toLocaleString() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

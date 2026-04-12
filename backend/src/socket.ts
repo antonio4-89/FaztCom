@@ -82,3 +82,7 @@ export function emitMesaActualizada(mesa: object): void {
 export function emitMenuActualizado(producto: object): void {
   if (io) io.emit('menu-actualizado', producto);
 }
+
+export function emitNotaCerrada(notaId: number): void {
+  if (io) io.emit('nota-cerrada', { notaId });
+}

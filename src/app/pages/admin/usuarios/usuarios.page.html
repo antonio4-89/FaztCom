@@ -34,10 +34,10 @@
           interface="popover"
           [(ngModel)]="formRole"
           placeholder="Seleccionar rol">
-          <ion-select-option value="admin">👑 Admin</ion-select-option>
-          <ion-select-option value="mesero">📋 Mesero</ion-select-option>
-          <ion-select-option value="cocinero">🔥 Cocinero</ion-select-option>
-          <ion-select-option value="bartender">🍸 Bartender</ion-select-option>
+          <ion-select-option value="admin">Admin</ion-select-option>
+          <ion-select-option value="mesero">Mesero</ion-select-option>
+          <ion-select-option value="cocinero">Cocinero</ion-select-option>
+          <ion-select-option value="bartender">Bartender</ion-select-option>
         </ion-select>
       </div>
     </div>
@@ -57,7 +57,7 @@
   <div style="display:flex;flex-direction:column;gap:8px">
     <div *ngFor="let u of usuarios" class="fc-card user-row">
       <div style="display:flex;align-items:center;gap:12px">
-        <div class="avatar" [ngClass]="'role-' + u.role">{{ roleEmoji(u.role) }}</div>
+        <div class="avatar" [ngClass]="'role-' + u.role"><ion-icon [name]="roleIcon(u.role)" style="font-size:18px"></ion-icon></div>
         <div>
           <div style="font-weight:500;font-size:13px">{{ u.name }}</div>
           <div class="fc-muted" style="font-size:11px;margin-top:1px">{{ u.email }}</div>
@@ -65,8 +65,8 @@
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="badge" [ngClass]="roleBadgeClass(u.role)">{{ u.role }}</span>
-        <button class="icon-btn" (click)="editUsuario(u)" title="Editar">✏️</button>
-        <button class="icon-btn btn-del" (click)="deleteUsuario(u)" title="Eliminar">🗑️</button>
+        <button class="icon-btn" (click)="editUsuario(u)" title="Editar"><ion-icon name="create-outline"></ion-icon></button>
+        <button class="icon-btn btn-del" (click)="deleteUsuario(u)" title="Eliminar"><ion-icon name="trash-outline"></ion-icon></button>
       </div>
     </div>
     <p *ngIf="!loading && usuarios.length === 0" class="fc-muted" style="text-align:center;padding:40px">Sin usuarios</p>

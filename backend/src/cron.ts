@@ -1,11 +1,14 @@
 import cron from 'node-cron';
 import prisma from './lib/prisma';
-import { emitMesaActualizada } from './socket';
+import { emitMesaActualizada, emitNotaCerrada } from './socket';
+
+// Hora del cierre automatico: 23:50 (10 minutos antes de medianoche)
+const CIERRE_HORA = '50 23 * * *';
 
 export function startCronJobs(): void {
-  // Every day at midnight: close all open notas and set mesas to limpiar
-  cron.schedule('0 0 * * *', async () => {
-    console.log('[CRON] Midnight auto-close: closing open notas...');
+  // Cierre automatico diario a las 23:50
+  cron.schedule(CIERRE_HORA, async () => {
+    console.log('[CRON] Cierre automatico 23:50 — cerrando notas abiertas...');
     try {
       const openNotas = await prisma.nota.findMany({
         where: { status: 'abierta' },
@@ -15,8 +18,13 @@ export function startCronJobs(): void {
         },
       });
 
+      if (openNotas.length === 0) {
+        console.log('[CRON] Sin notas abiertas. Nada que cerrar.');
+        return;
+      }
+
       for (const nota of openNotas) {
-        // Calculate total
+        // Calcular total sumando items de todas las comandas
         let total = 0;
         for (const comanda of nota.comandas) {
           for (const item of comanda.items) {
@@ -24,7 +32,7 @@ export function startCronJobs(): void {
           }
         }
 
-        // Close the nota
+        // Cerrar la nota
         await prisma.nota.update({
           where: { id: nota.id },
           data: {
@@ -34,7 +42,7 @@ export function startCronJobs(): void {
           },
         });
 
-        // Update all pending/in-progress comandas to entregado
+        // Marcar todas las comandas pendientes/en-preparacion como entregado
         await prisma.comanda.updateMany({
           where: {
             notaId: nota.id,
@@ -43,7 +51,7 @@ export function startCronJobs(): void {
           data: { status: 'entregado' },
         });
 
-        // Set mesa to limpiar if exists
+        // Liberar la mesa (a limpiar) si aplica
         if (nota.mesaId) {
           const updatedMesa = await prisma.mesa.update({
             where: { id: nota.mesaId },
@@ -51,13 +59,16 @@ export function startCronJobs(): void {
           });
           emitMesaActualizada(updatedMesa);
         }
+
+        // Notificar a la pantalla del admin que esta nota fue cerrada
+        emitNotaCerrada(nota.id);
       }
 
-      console.log(`[CRON] Closed ${openNotas.length} open nota(s) at midnight`);
+      console.log(`[CRON] Cierre completado: ${openNotas.length} nota(s) cerrada(s) automaticamente`);
     } catch (error) {
-      console.error('[CRON] Error in midnight auto-close:', error);
+      console.error('[CRON] Error en cierre automatico:', error);
     }
   });
 
-  console.log('[CRON] Midnight auto-close scheduled');
+  console.log(`[CRON] Cierre automatico programado para las 23:50`);
 }

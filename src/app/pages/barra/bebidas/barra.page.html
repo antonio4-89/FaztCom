@@ -45,7 +45,7 @@
       <div class="ronda-sources">
         <span *ngFor="let s of g.sources" class="badge"
               [class.badge-pendiente]="!s.listo" [class.badge-listo]="s.listo">
-          {{ s.listo ? '✅' : '⬜' }} Mesa {{ s.mesa }} (x{{ s.qty }}) — #{{ s.comandaId }}
+          <ion-icon [name]="s.listo ? 'checkmark-circle' : 'square-outline'" style="vertical-align:middle;margin-right:2px"></ion-icon> Mesa {{ s.mesa }} (x{{ s.qty }}) — #{{ s.comandaId }}
         </span>
       </div>
     </div>
@@ -87,10 +87,10 @@
 
       <div class="itms">
         <div *ngFor="let it of c.items" class="irow" [class.item-done]="it.listo"
-             (click)="c.status !== 'listo' && c.status !== 'entregado' ? toggleItemListo(c, it) : null"
-             [style.cursor]="c.status !== 'listo' && c.status !== 'entregado' ? 'pointer' : 'default'">
-          <span class="item-check" *ngIf="c.status !== 'listo' && c.status !== 'entregado'">
-            {{ it.listo ? '✅' : '⬜' }}
+             (click)="c.items.length > 1 && c.status !== 'listo' && c.status !== 'entregado' ? toggleItemListo(c, it) : null"
+             [style.cursor]="c.items.length > 1 && c.status !== 'listo' && c.status !== 'entregado' ? 'pointer' : 'default'">
+          <span class="item-check" *ngIf="c.items.length > 1 && c.status !== 'listo' && c.status !== 'entregado'">
+            <ion-icon [name]="it.listo ? 'checkmark-circle' : 'square-outline'"></ion-icon>
           </span>
           <span class="qty">{{ it.qty }}</span>
           <span [style.text-decoration]="it.listo ? 'line-through' : 'none'">{{ itemName(it) }}</span>

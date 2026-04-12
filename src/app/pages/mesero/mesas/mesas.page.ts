@@ -50,7 +50,7 @@ export class MesasPage implements OnInit, OnDestroy {
           { id: 1, identifier: '1PM', seccion: 'PM', tipo: 'mesa', status: 'libre' },
           { id: 2, identifier: '2PM', seccion: 'PM', tipo: 'mesa', status: 'abierta' },
           { id: 3, identifier: '3PM', seccion: 'PM', tipo: 'mesa', status: 'libre' },
-          { id: 4, identifier: '4PM', seccion: 'PM', tipo: 'mesa', status: 'cerrada' },
+          { id: 4, identifier: '4PM', seccion: 'PM', tipo: 'mesa', status: 'libre' },
           { id: 5, identifier: '5PM', seccion: 'PM', tipo: 'mesa', status: 'libre' },
           { id: 6, identifier: 'SALA', seccion: 'PM', tipo: 'mesa', status: 'abierta' },
           { id: 7, identifier: '1T', seccion: 'T', tipo: 'mesa', status: 'libre' },
@@ -59,7 +59,7 @@ export class MesasPage implements OnInit, OnDestroy {
           { id: 10, identifier: '4T', seccion: 'T', tipo: 'mesa', status: 'libre' },
           { id: 11, identifier: '5T', seccion: 'T', tipo: 'mesa', status: 'abierta' },
           { id: 12, identifier: '6T', seccion: 'T', tipo: 'mesa', status: 'libre' },
-          { id: 13, identifier: '7T', seccion: 'T', tipo: 'mesa', status: 'cerrada' },
+          { id: 13, identifier: '7T', seccion: 'T', tipo: 'mesa', status: 'libre' },
           { id: 14, identifier: '8T', seccion: 'T', tipo: 'mesa', status: 'libre' },
           { id: 15, identifier: '1P', seccion: 'T', tipo: 'periquera', status: 'libre' },
           { id: 16, identifier: '2P', seccion: 'T', tipo: 'periquera', status: 'abierta' },
@@ -77,14 +77,13 @@ export class MesasPage implements OnInit, OnDestroy {
     const labels: Record<string, string> = {
       libre: 'Disponible',
       abierta: 'Ocupada',
-      cerrada: 'Cerrada',
       limpiar: 'Por limpiar',
     };
     return labels[status] || status;
   }
 
   selectMesa(mesa: Mesa) {
-    if (mesa.status === 'cerrada' || mesa.status === 'limpiar') return;
+    if (mesa.status === 'limpiar') return;
     this.router.navigate(['/mesero/nueva-comanda'], {
       queryParams: { mesa: mesa.identifier, mesaId: mesa.id },
     });

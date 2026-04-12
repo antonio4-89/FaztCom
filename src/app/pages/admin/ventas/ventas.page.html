@@ -6,72 +6,127 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <h1 class="fc-h1" style="margin-bottom:16px">Ventas</h1>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <h1 class="fc-h1">Ventas</h1>
+    <span class="fc-muted" style="font-size:12px">{{ selectedDateLabel }}</span>
+  </div>
 
-  <!-- Period filter buttons -->
+  <!-- Filter card -->
   <div class="fc-card" style="margin-bottom:12px;padding:12px 16px">
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-      <button class="period-btn" [class.active]="activeFilter === 'hoy'" (click)="setHoy()">Hoy</button>
-      <button class="period-btn" [class.active]="activeFilter === 'semana'" (click)="setSemana()">Esta Semana</button>
-      <button class="period-btn" [class.active]="activeFilter === 'mes'" (click)="setMes()">Este Mes</button>
-      <button class="period-btn" [class.active]="activeFilter === 'anio'" (click)="setAnio()">Este Ano</button>
-      <button class="period-btn" [class.active]="activeFilter === 'todo'" (click)="clearFilter()">Todo</button>
+    <!-- View buttons -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="period-btn" [class.active]="activeFilter !== 'anio'" (click)="setMesCompleto()">
+        <ion-icon name="calendar-outline" style="vertical-align:middle;margin-right:4px"></ion-icon>
+        Este Mes
+      </button>
+      <button class="period-btn" [class.active]="activeFilter === 'anio'" (click)="setAnio()">
+        <ion-icon name="stats-chart-outline" style="vertical-align:middle;margin-right:4px"></ion-icon>
+        Este Ano
+      </button>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <ion-icon name="calendar-outline" style="color:var(--fc-accent);font-size:18px"></ion-icon>
-      <span class="fc-muted" style="font-size:12px">Rango personalizado:</span>
-      <input type="date" class="date-input" [(ngModel)]="desde" (change)="onDateChange()"/>
-      <span class="fc-muted">—</span>
-      <input type="date" class="date-input" [(ngModel)]="hasta" (change)="onDateChange()"/>
+
+    <!-- Day picker (only when not showing annual) -->
+    <div *ngIf="activeFilter !== 'anio'">
+      <div class="picker-label">
+        <ion-icon name="today-outline"></ion-icon>
+        Día — {{ currentMonthLabel }}
+      </div>
+      <div class="days-grid">
+        <!-- Encabezados de días de la semana -->
+        <div class="dow-header" *ngFor="let dw of ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb']">{{ dw }}</div>
+        <!-- Celdas del calendario (null = vacía antes del día 1) -->
+        <ng-container *ngFor="let d of calendarDays">
+          <div *ngIf="d === null" class="day-empty"></div>
+          <button *ngIf="d !== null"
+            class="day-btn"
+            [class.active]="selectedDay === d && activeFilter === 'mes'"
+            [class.today]="d === todayDay"
+            [class.disabled]="isFutureDay(d)"
+            [disabled]="isFutureDay(d)"
+            (click)="selectDay(d)">
+            {{ d }}
+          </button>
+        </ng-container>
+      </div>
     </div>
   </div>
 
-  <div *ngIf="loading" style="text-align:center;padding:60px">
-    <ion-spinner name="crescent" color="warning"></ion-spinner>
-  </div>
-
-  <div *ngIf="!loading && summary">
-    <!-- Summary Cards -->
-    <div class="sum-grid">
-      <div class="fc-card sum-card">
-        <div class="fc-muted sum-label">Terraza</div>
-        <div class="sum-value fc-num" style="color:var(--fc-accent)">${{ summary.ventasT.toLocaleString() }}</div>
-      </div>
-      <div class="fc-card sum-card">
-        <div class="fc-muted sum-label">PM / Sala</div>
-        <div class="sum-value fc-num" style="color:var(--fc-purple)">${{ summary.ventasPM.toLocaleString() }}</div>
-      </div>
-      <div class="fc-card sum-card">
-        <div class="fc-muted sum-label">Para Llevar</div>
-        <div class="sum-value fc-num" style="color:var(--fc-blue)">${{ summary.ventasPL.toLocaleString() }}</div>
-      </div>
-      <div class="fc-card sum-card">
-        <div class="fc-muted sum-label">En Caja</div>
-        <div class="sum-value fc-num" style="color:var(--fc-green)">${{ summary.enCaja.toLocaleString() }}</div>
-      </div>
+  <!-- ANNUAL VIEW -->
+  <div *ngIf="showMonthly">
+    <div *ngIf="loadingMonthly" style="text-align:center;padding:60px">
+      <ion-spinner name="crescent" color="warning"></ion-spinner>
     </div>
-
-    <!-- Notas del periodo -->
-    <div class="fc-card" style="margin-top:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-        <h2 class="fc-h2">Notas cerradas</h2>
-        <span class="fc-muted" style="font-size:12px">{{ summary.notasCerradas.length }} nota(s)</span>
-      </div>
-      <div class="notas-list">
-        <div *ngFor="let n of summary.notasCerradas" class="nota-row">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-weight:500">{{ n.paraLlevar ? 'Para Llevar' : ('Mesa ' + (n.mesa?.identifier || '—')) }}</span>
-            <span class="badge" [class.sec-T]="n.mesa?.seccion==='T'" [class.sec-PM]="n.mesa?.seccion==='PM'" [class.sec-PL]="n.paraLlevar">
-              {{ n.paraLlevar ? 'P/Llevar' : (n.mesa?.seccion === 'T' ? 'Terraza' : 'PM/Sala') }}
-            </span>
-            <span class="fc-muted" style="font-size:12px">{{ n.mesero?.name }}</span>
-            <span class="fc-dim" style="font-size:11px">{{ n.closedAt | date:'dd/MM HH:mm' }}</span>
-          </div>
-          <span style="font-weight:700;color:var(--fc-green)">${{ n.total?.toLocaleString() }}</span>
+    <div *ngIf="!loadingMonthly">
+      <div class="fc-card" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;padding:14px 18px">
+        <div>
+          <div class="fc-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.5px">Total {{ monthlyYear }}</div>
+          <div style="font-size:26px;font-weight:800;color:var(--fc-green)">${{ monthlyTotal.toLocaleString() }}</div>
         </div>
-        <p *ngIf="summary.notasCerradas.length === 0" class="fc-muted" style="text-align:center;padding:24px">
-          Sin notas en este periodo
-        </p>
+        <ion-icon name="trending-up-outline" style="font-size:32px;color:var(--fc-green);opacity:.4"></ion-icon>
+      </div>
+      <div class="months-grid">
+        <div *ngFor="let m of monthlyData" class="fc-card month-card" [class.has-sales]="m.total > 0">
+          <div class="month-name">{{ m.nombre }}</div>
+          <div class="month-total" [style.color]="m.total > 0 ? 'var(--fc-green)' : 'var(--fc-dim)'">${{ m.total.toLocaleString() }}</div>
+          <div class="month-detail" *ngIf="m.total > 0">
+            <span *ngIf="m.ventasT > 0">T: ${{ m.ventasT.toLocaleString() }}</span>
+            <span *ngIf="m.ventasPM > 0">PM: ${{ m.ventasPM.toLocaleString() }}</span>
+            <span *ngIf="m.ventasPL > 0">PL: ${{ m.ventasPL.toLocaleString() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY / MONTHLY RANGE VIEW -->
+  <div *ngIf="!showMonthly">
+    <div *ngIf="loading" style="text-align:center;padding:60px">
+      <ion-spinner name="crescent" color="warning"></ion-spinner>
+    </div>
+
+    <div *ngIf="!loading && summary">
+      <!-- Summary Cards -->
+      <div class="sum-grid">
+        <div class="fc-card sum-card">
+          <div class="fc-muted sum-label">Terraza</div>
+          <div class="sum-value fc-num" style="color:var(--fc-accent)">${{ summary.ventasT.toLocaleString() }}</div>
+        </div>
+        <div class="fc-card sum-card">
+          <div class="fc-muted sum-label">PM / Sala</div>
+          <div class="sum-value fc-num" style="color:var(--fc-purple)">${{ summary.ventasPM.toLocaleString() }}</div>
+        </div>
+        <div class="fc-card sum-card">
+          <div class="fc-muted sum-label">Para Llevar</div>
+          <div class="sum-value fc-num" style="color:var(--fc-blue)">${{ summary.ventasPL.toLocaleString() }}</div>
+        </div>
+        <div class="fc-card sum-card">
+          <div class="fc-muted sum-label">En Caja</div>
+          <div class="sum-value fc-num" style="color:var(--fc-green)">${{ summary.enCaja.toLocaleString() }}</div>
+        </div>
+      </div>
+
+      <!-- Notas list -->
+      <div class="fc-card" style="margin-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <h2 class="fc-h2">Notas cerradas</h2>
+          <span class="fc-muted" style="font-size:12px">{{ summary.notasCerradas.length }} nota(s)</span>
+        </div>
+        <div class="notas-list">
+          <div *ngFor="let n of summary.notasCerradas" class="nota-row">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-weight:500">{{ n.paraLlevar ? 'Para Llevar' : ('Mesa ' + (n.mesa?.identifier || '—')) }}</span>
+              <span class="badge" [class.sec-T]="n.mesa?.seccion==='T'" [class.sec-PM]="n.mesa?.seccion==='PM'" [class.sec-PL]="n.paraLlevar">
+                {{ n.paraLlevar ? 'P/Llevar' : (n.mesa?.seccion === 'T' ? 'Terraza' : 'PM/Sala') }}
+              </span>
+              <span class="fc-muted" style="font-size:12px">{{ n.mesero?.name }}</span>
+              <span class="fc-dim" style="font-size:11px">{{ n.closedAt | date:'dd/MM HH:mm' }}</span>
+            </div>
+            <span style="font-weight:700;color:var(--fc-green)">${{ n.total?.toLocaleString() }}</span>
+          </div>
+          <p *ngIf="summary.notasCerradas.length === 0" class="fc-muted" style="text-align:center;padding:24px">
+            Sin notas en este periodo
+          </p>
+        </div>
       </div>
     </div>
   </div>

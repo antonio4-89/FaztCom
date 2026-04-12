@@ -1,4 +1,4 @@
-export type MesaStatus = 'libre' | 'abierta' | 'cerrada' | 'limpiar';
+export type MesaStatus = 'libre' | 'abierta' | 'limpiar';
 export type Seccion = 'PM' | 'T';
 
 export interface Mesa {

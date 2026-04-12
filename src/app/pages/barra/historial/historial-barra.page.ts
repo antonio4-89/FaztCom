@@ -24,7 +24,7 @@ export class HistorialBarraPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loading = true;
-    this.api.get<Comanda[]>('/comandas?destino=barra').subscribe({
+    this.api.get<Comanda[]>('/comandas?destino=barra&today=true').subscribe({
       next: d => {
         this.comandas = d.filter(c => c.status === 'listo' || c.status === 'entregado');
         this.loading = false;

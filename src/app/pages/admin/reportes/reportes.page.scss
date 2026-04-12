@@ -1,0 +1,204 @@
+// Tabs
+.tab-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: 1px solid var(--fc-border);
+  border-radius: 10px;
+  background: var(--fc-surface);
+  color: var(--fc-muted);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+  &.active {
+    background: var(--fc-accent);
+    color: #fff;
+    border-color: var(--fc-accent);
+  }
+  &:not(.active):hover { border-color: var(--fc-accent); color: var(--fc-text); }
+  ion-icon { font-size: 16px; }
+}
+
+// Report header
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.total-pill {
+  background: var(--fc-green-soft);
+  color: var(--fc-green);
+  font-size: 18px;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  padding: 8px 18px;
+  border-radius: 20px;
+}
+
+// Summary 4-column grid
+.sum4-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.mini-sum {
+  text-align: center;
+  padding: 10px 8px !important;
+}
+.sum-lbl {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.sum-val {
+  font-size: 16px;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  margin-top: 4px;
+}
+
+// Mini stat (inline)
+.mini-stat {
+  background: var(--fc-surface-alt);
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+// Bar chart
+.chart-card { padding: 16px !important; }
+.chart-rows { display: flex; flex-direction: column; gap: 8px; }
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 80px;
+  align-items: center;
+  gap: 10px;
+}
+.chart-row-sm {
+  grid-template-columns: 60px 1fr 72px;
+  gap: 8px;
+}
+
+.day-label {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.day-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fc-text);
+}
+.day-date {
+  font-size: 10px;
+}
+
+.bar-wrap {
+  background: var(--fc-surface-alt);
+  border-radius: 4px;
+  height: 16px;
+  overflow: hidden;
+}
+.bar {
+  height: 100%;
+  background: var(--fc-accent);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+  &.bar-zero { background: var(--fc-border); min-width: 0; }
+}
+
+.day-total {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  text-align: right;
+}
+
+// Detail table
+.detail-table { display: flex; flex-direction: column; }
+.detail-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  padding: 6px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--fc-muted);
+  border-bottom: 1px solid var(--fc-border);
+  margin-bottom: 4px;
+}
+.detail-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  padding: 7px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  &:hover { background: var(--fc-surface-alt); }
+  &.row-zero { opacity: 0.4; }
+}
+.detail-total {
+  font-weight: 700;
+  color: var(--fc-accent);
+}
+.detail-footer {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  padding: 8px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  border-top: 1px solid var(--fc-border);
+  margin-top: 4px;
+  color: var(--fc-green);
+}
+
+// Month navigator
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--fc-border);
+  border-radius: 8px;
+  background: var(--fc-surface);
+  color: var(--fc-text);
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover:not([disabled]) { border-color: var(--fc-accent); }
+  &.nav-disabled { opacity: 0.3; cursor: not-allowed; }
+  ion-icon { font-size: 18px; }
+}
+
+@media (max-width: 768px) {
+  .sum4-grid { grid-template-columns: repeat(2, 1fr); }
+  .detail-header, .detail-row, .detail-footer {
+    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+    span:nth-child(3) { display: none; } // hide PM on small screens
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-row { grid-template-columns: 56px 1fr 66px; }
+  .tab-btn { padding: 7px 12px; font-size: 12px; }
+}

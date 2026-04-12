@@ -26,7 +26,6 @@
 }
 .dot-libre { background: var(--fc-dim); }
 .dot-abierta { background: var(--fc-accent); }
-.dot-cerrada { background: var(--fc-green); }
 .dot-limpiar { background: var(--fc-yellow); }
 
 .section-block {
@@ -69,11 +68,6 @@
     background: var(--fc-accent-soft);
   }
 
-  &.mesa-cerrada {
-    border-color: var(--fc-green);
-    background: var(--fc-green-soft);
-  }
-
   &.mesa-disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -102,7 +96,6 @@
 }
 
 .mesa-abierta .mesa-id { color: var(--fc-accent); }
-.mesa-cerrada .mesa-id { color: var(--fc-green); }
 .mesa-limpiar .mesa-id { color: var(--fc-yellow); }
 
 .mesa-card.mesa-limpiar {

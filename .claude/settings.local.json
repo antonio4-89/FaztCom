@@ -14,7 +14,12 @@
       "Bash(taskkill /F /PID 35876)",
       "Bash(wc -l /d/cod/ionic/faztcom/backend/src/routes/*.ts)",
       "Bash(npx tsc:*)",
-      "Bash(npx ng:*)"
+      "Bash(npx ng:*)",
+      "Bash(xargs grep:*)",
+      "Bash(npm list:*)",
+      "Bash(npm install:*)",
+      "Bash(node docs/generate-logs-doc.js)",
+      "Bash(python \"C:/Users/canel/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/3712062a-bf44-4604-be0f-b9139c821ac8/2abe19f9-e5b1-44d2-989a-a60b0831c249/skills/docx/scripts/office/validate.py\" \"D:/cod/ionic/faztcom/docs/Niveles_de_Logging_FaztCom.docx\")"
     ]
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { VentasService, VentasSummary } from '../../../core/services/ventas.service';
+import { VentasService, VentasSummary, MonthlySummary } from '../../../core/services/ventas.service';
 
 @Component({
   selector: 'app-ventas',
@@ -10,68 +10,109 @@ import { VentasService, VentasSummary } from '../../../core/services/ventas.serv
 export class VentasPage implements OnInit {
   summary: VentasSummary | null = null;
   loading = false;
-  desde = '';
-  hasta = '';
-  activeFilter = 'hoy';
+  activeFilter = 'mes';
+
+  // Day picker (same month view always)
+  selectedDay: number = new Date().getDate();
+  todayDay: number = new Date().getDate();
+  daysInMonth: number[] = [];
+  calendarDays: (number | null)[] = []; // null = empty cell before day 1
+  currentMonthLabel = '';
+
+  // Monthly/annual view
+  showMonthly = false;
+  monthlyData: MonthlySummary[] = [];
+  monthlyYear = new Date().getFullYear();
+  monthlyTotal = 0;
+  loadingMonthly = false;
 
   constructor(private svc: VentasService) {}
 
-  ngOnInit() { this.setHoy(); }
-
-  setHoy() {
-    const today = new Date().toISOString().split('T')[0];
-    this.desde = today;
-    this.hasta = today;
-    this.activeFilter = 'hoy';
-    this.loadHistorial();
+  ngOnInit() {
+    this.buildDays();
+    // Load today on startup
+    this.loadDay(this.todayDay);
   }
 
-  setSemana() {
+  buildDays() {
     const now = new Date();
-    const dayOfWeek = now.getDay();
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-    this.desde = monday.toISOString().split('T')[0];
-    this.hasta = now.toISOString().split('T')[0];
-    this.activeFilter = 'semana';
-    this.loadHistorial();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const lastDay = new Date(year, month + 1, 0).getDate();
+
+    this.daysInMonth = Array.from({ length: lastDay }, (_, i) => i + 1);
+
+    // getDay() → 0=Dom, 1=Lun, ..., 6=Sáb  (semana empieza en domingo)
+    const firstDow = new Date(year, month, 1).getDay();
+    this.calendarDays = [
+      ...Array(firstDow).fill(null),          // celdas vacías antes del día 1
+      ...this.daysInMonth,
+    ];
+
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+    ];
+    this.currentMonthLabel = meses[month] + ' ' + year;
   }
 
-  setMes() {
+  isFutureDay(day: number): boolean {
+    return day > this.todayDay;
+  }
+
+  selectDay(day: number) {
+    if (this.isFutureDay(day)) return;
+    this.showMonthly = false;
+    this.activeFilter = 'mes';
+    this.selectedDay = day;
+    this.loadDay(day);
+  }
+
+  setMesCompleto() {
+    this.showMonthly = false;
+    this.activeFilter = 'mes-total';
+    this.selectedDay = 0; // none selected
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-    this.desde = firstDay.toISOString().split('T')[0];
-    this.hasta = now.toISOString().split('T')[0];
-    this.activeFilter = 'mes';
-    this.loadHistorial();
+    this.loadRange(firstDay.toISOString().split('T')[0], now.toISOString().split('T')[0]);
   }
 
   setAnio() {
-    const now = new Date();
-    const firstDay = new Date(now.getFullYear(), 0, 1);
-    this.desde = firstDay.toISOString().split('T')[0];
-    this.hasta = now.toISOString().split('T')[0];
     this.activeFilter = 'anio';
-    this.loadHistorial();
+    this.showMonthly = true;
+    this.loadMonthly();
   }
 
-  clearFilter() {
-    this.desde = '';
-    this.hasta = '';
-    this.activeFilter = 'todo';
-    this.loadHistorial();
+  private loadDay(day: number) {
+    const now = new Date();
+    const date = new Date(now.getFullYear(), now.getMonth(), day);
+    const iso = date.toISOString().split('T')[0];
+    this.loadRange(iso, iso);
   }
 
-  onDateChange() {
-    this.activeFilter = 'custom';
-    this.loadHistorial();
-  }
-
-  loadHistorial() {
+  private loadRange(desde: string, hasta: string) {
     this.loading = true;
-    this.svc.getHistorialVentas(this.desde || undefined, this.hasta || undefined).subscribe({
+    this.svc.getHistorialVentas(desde, hasta).subscribe({
       next: s => { this.summary = s; this.loading = false; },
       error: () => { this.loading = false; },
     });
+  }
+
+  private loadMonthly() {
+    this.loadingMonthly = true;
+    this.svc.getVentasMensuales(this.monthlyYear).subscribe({
+      next: data => {
+        this.monthlyData = data;
+        this.monthlyTotal = data.reduce((s, m) => s + m.total, 0);
+        this.loadingMonthly = false;
+      },
+      error: () => { this.loadingMonthly = false; },
+    });
+  }
+
+  get selectedDateLabel(): string {
+    if (this.activeFilter === 'mes-total') return 'Todo el mes';
+    if (this.activeFilter === 'anio') return String(this.monthlyYear);
+    return `${this.selectedDay} de ${this.currentMonthLabel}`;
   }
 }

@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
       admin: [
         { label: 'Dashboard', route: '/admin/dashboard', icon: 'grid-outline' },
         { label: 'Ventas', route: '/admin/ventas', icon: 'bar-chart-outline' },
+        { label: 'Reportes', route: '/admin/reportes', icon: 'document-text-outline' },
         { label: 'Gastos', route: '/admin/gastos', icon: 'wallet-outline' },
         { label: 'Menu', route: '/admin/menu', icon: 'restaurant-outline' },
         { label: 'Usuarios', route: '/admin/usuarios', icon: 'people-outline' },
@@ -40,7 +41,6 @@ export class AppComponent implements OnInit {
       ],
       mesero: [
         { label: 'Mesas', route: '/mesero/mesas', icon: 'grid-outline' },
-        { label: 'Nueva Comanda', route: '/mesero/nueva-comanda', icon: 'add-circle-outline' },
         { label: 'Mis Pedidos', route: '/mesero/mis-pedidos', icon: 'receipt-outline' },
         { label: 'Historial', route: '/mesero/historial', icon: 'time-outline' },
         { label: 'Notificaciones', route: '/mesero/notificaciones', icon: 'notifications-outline' },

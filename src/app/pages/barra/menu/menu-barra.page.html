@@ -24,7 +24,7 @@
         </div>
         <button class="icon-btn stock-btn" [class.active-agotado]="p.agotado"
                 (click)="toggleAgotado(p)" [title]="p.agotado ? 'Marcar disponible' : 'Marcar agotado'">
-          {{ p.agotado ? '✅' : '🚫' }}
+          <ion-icon [name]="p.agotado ? 'checkmark-circle-outline' : 'close-circle-outline'"></ion-icon>
         </button>
       </div>
     </div>

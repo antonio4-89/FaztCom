@@ -33,7 +33,7 @@ export class SocketService {
     const events = [
       'nueva-comanda-cocina', 'nueva-comanda-barra',
       'comanda-actualizada', 'pedido-listo', 'mesa-actualizada',
-      'menu-actualizado',
+      'menu-actualizado', 'nota-cerrada',
     ];
     for (const event of events) {
       this.socket.on(event, (data: any) => {
@@ -61,4 +61,5 @@ export class SocketService {
   onPedidoListo() { return this.on<any>('pedido-listo'); }
   onMesaActualizada() { return this.on<any>('mesa-actualizada'); }
   onMenuActualizado() { return this.on<any>('menu-actualizado'); }
+  onNotaCerrada() { return this.on<any>('nota-cerrada'); }
 }

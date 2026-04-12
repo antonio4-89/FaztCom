@@ -19,7 +19,7 @@
     <!-- KPI Grid -->
     <div class="kpi-grid">
       <div *ngFor="let st of stats" class="fc-card kpi-card" [style.--kpi-color]="st.color" [style.--kpi-bg]="st.bg">
-        <div class="kpi-icon" [style.background]="st.bg">{{ st.icon }}</div>
+        <div class="kpi-icon" [style.background]="st.bg"><ion-icon [name]="st.icon" [style.color]="st.color" style="font-size:20px"></ion-icon></div>
         <div>
           <div class="fc-muted" style="font-size:10px;text-transform:uppercase;letter-spacing:.5px">{{ st.label }}</div>
           <div class="kpi-value fc-num" [style.color]="st.color">{{ st.value }}</div>
@@ -32,11 +32,11 @@
       <h2 class="fc-h2" style="margin-bottom:14px">Ventas por Sección</h2>
       <div class="sec-grid">
         <div class="sec-panel">
-          <div class="fc-muted" style="font-size:11px">🏔 Terraza</div>
+          <div class="fc-muted" style="font-size:11px"><ion-icon name="sunny-outline" style="vertical-align:middle;margin-right:2px"></ion-icon> Terraza</div>
           <div class="sec-value fc-num" style="color:var(--fc-accent)">${{ summary.ventasT.toLocaleString() }}</div>
         </div>
         <div class="sec-panel">
-          <div class="fc-muted" style="font-size:11px">🏠 PM / Sala</div>
+          <div class="fc-muted" style="font-size:11px"><ion-icon name="home-outline" style="vertical-align:middle;margin-right:2px"></ion-icon> PM / Sala</div>
           <div class="sec-value fc-num" style="color:var(--fc-purple)">${{ summary.ventasPM.toLocaleString() }}</div>
         </div>
       </div>
